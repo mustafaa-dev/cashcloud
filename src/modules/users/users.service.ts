@@ -24,11 +24,6 @@ export class UsersService {
     const userPicture: Picture = await this.mediaService.uploadPicture(picture);
     const role = await this.rolesService.getRoleBy({ name: addUserDto.role });
     const newUser: User = new User();
-    const code = parseInt(await generateNumber(6));
-    this.ee.emit(VERIFICATION_CODE, {
-      email: newUser.email,
-      code,
-    });
     Object.assign(newUser, { ...addUserDto, picture: userPicture, role });
     return await this.usersRepository.create(newUser);
   }
@@ -47,5 +42,11 @@ export class UsersService {
 
   deleteUser(id: number): string {
     return `This action removes a #${id} user`;
+  }
+
+  async sendVerificationCode(email: string) {
+    const code: number = await generateNumber(10);
+    this.ee.emit(VERIFICATION_CODE, { email, code });
+    return code;
   }
 }

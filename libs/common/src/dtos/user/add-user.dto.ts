@@ -18,23 +18,18 @@ export class AddUserDto {
   @IsString()
   @IsNotEmpty()
   name: string;
-
   @IsString()
   @IsNotEmpty()
   username: string;
-
   @IsEmail()
   @IsNotEmpty()
   email: string;
-
   @IsString()
   @IsNotEmpty()
   password: string;
-
   @IsPhoneNumber('EG')
   @IsNotEmpty()
   phone: string;
-
   @IsEnum(ROLES)
   @IsNotEmpty()
   role: string;
