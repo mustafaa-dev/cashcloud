@@ -1,0 +1,62 @@
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
+import { RolesService } from './roles.service';
+import { AddRoleDto, RoleQueryDto } from '@app/common';
+import { Role } from './entities/role.entity';
+
+@Controller('roles')
+export class RolesController {
+  constructor(private readonly rolesService: RolesService) {}
+
+  @Get()
+  async getRoles(@Query() query: RoleQueryDto): Promise<Role[]> {
+    return await this.rolesService.getRoles(query);
+  }
+
+  @Get(':id')
+  async getRoleBy(@Param('id') id: number): Promise<Role> {
+    return await this.rolesService.getRoleBy({ id });
+  }
+
+  @Post()
+  async addRole(@Body() addRoleDto: AddRoleDto): Promise<Role> {
+    return await this.rolesService.addRole(addRoleDto);
+  }
+
+  @Delete(':id')
+  async deleteRole(@Param('id') id: number) {
+    return await this.rolesService.deleteRole(id);
+  }
+
+  @Patch(':id')
+  async editRole(@Param('id') id: number, @Body() addRoleDto: AddRoleDto) {
+    return await this.rolesService.editRole(id, addRoleDto);
+  }
+
+  @Post(':roleId/:permissionId')
+  async addPermissionToRole(
+    @Param('roleId') roleId: number,
+    @Param('permissionId') permissionId: number,
+  ): Promise<Role> {
+    return await this.rolesService.addPermissionToRole(roleId, permissionId);
+  }
+
+  @Patch(':roleId/:permissionId')
+  async removePermissionFromRole(
+    @Param('roleId') roleId: number,
+    @Param('permissionId') permissionId: number,
+  ): Promise<Role> {
+    return await this.rolesService.removePermissionFromRole(
+      roleId,
+      permissionId,
+    );
+  }
+}

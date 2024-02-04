@@ -3,9 +3,9 @@ import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { LoggerModule } from '@app/common';
 import { ConfigModule } from '@nestjs/config';
-import { AdminAuthController } from './modules/auth/controllers/admin-auth.controller';
-import { UsersAuthController } from './modules/auth/controllers/users-auth.controller';
-import { UsersController } from './modules/users/users.controller';
+import { RolesModule } from './modules/roles/roles.module';
+import { MediaModule } from './modules/media/media.module';
+import { MailingModule } from './modules/mailing/mailing.module';
 
 @Module({
   imports: [
@@ -13,8 +13,11 @@ import { UsersController } from './modules/users/users.controller';
     LoggerModule,
     AuthModule,
     UsersModule,
+    RolesModule,
+    MediaModule,
+    MailingModule,
   ],
-  controllers: [AdminAuthController, UsersAuthController, UsersController],
+  controllers: [],
   providers: [],
 })
 export class AppModule {}

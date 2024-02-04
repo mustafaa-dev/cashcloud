@@ -37,7 +37,10 @@ export abstract class AbstractRepository<
   }
 
   async findOneAndDelete(where: FindOptionsWhere<TEntity>) {
-    return await this.entityRepository.delete(where);
+    const { affected } = await this.entityRepository.delete(where);
+    if (affected <= 0)
+      throw new NotFoundException('Error While Deleting , Not found');
+    return;
   }
 
   async checkOne(where: FindOptionsWhere<TEntity>) {

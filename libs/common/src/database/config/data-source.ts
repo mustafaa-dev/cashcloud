@@ -1,6 +1,6 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
-import * as path from 'path';
 import { DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USERNAME } from './db';
+import * as path from 'path';
 
 export const config: DataSourceOptions = {
   host: DB_HOST,
@@ -9,23 +9,8 @@ export const config: DataSourceOptions = {
   password: DB_PASSWORD,
   port: +DB_PORT,
   database: DB_NAME,
-  migrations:
-    [
-      path.join(
-        __dirname,
-        '..',
-        '..',
-        '..',
-        '..',
-        '..',
-        'apps',
-        '**',
-        'migrations',
-        '**',
-        '*{.js,.ts}',
-      ),
-    ],
-
+  entities: [path.join('src', '**', '*.entity.{ts}')],
+  migrations: [path.join('src', 'migrations', '**', '*.js')],
 };
 
 // export const config: DataSourceOptions = {

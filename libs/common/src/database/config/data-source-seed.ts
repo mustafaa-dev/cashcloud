@@ -15,8 +15,7 @@ export const config: DataSourceOptions = {
   password: DB_PASSWORD,
   port: +DB_PORT,
   database: DB_NAME,
-  entities: [path.join('dist', 'apps', '**', '*.entity.js')],
-  migrations: [path.join('libs', '**', 'seeds', '*{.js,.ts}')],
+  migrations: [path.join('seeds', '*{.js,.ts}')],
 };
 
 const dataSource = new DataSource(config);
