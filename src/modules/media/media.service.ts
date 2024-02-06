@@ -52,4 +52,8 @@ export class MediaService {
       pictureStream.pipe(theTransformStream);
     });
   }
+
+  async deleteImage(public_id: string) {
+    return await cloudinary.uploader.destroy(public_id);
+  }
 }

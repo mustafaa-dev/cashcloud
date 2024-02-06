@@ -14,6 +14,12 @@ export class MailingService {
     );
   }
 
+  async sendResetPassword(data: any) {
+    const email = data.email;
+    delete data.email;
+    return await this.sendEmail(email, 'Reset Password', { ...data });
+  }
+
   async sendEmail(to: any, subject: string, text: any) {
     const SENDGRID_API_KEY = this.configService.get('SENDGRID_API_KEY');
     sgMail.setApiKey(SENDGRID_API_KEY);

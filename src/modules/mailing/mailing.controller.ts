@@ -1,7 +1,7 @@
 import { Controller } from '@nestjs/common';
 import { MailingService } from './mailing.service';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
-import { VERIFICATION_CODE } from '@app/common';
+import { RESET_PASSWORD, VERIFICATION_CODE } from '@app/common';
 
 @Controller()
 export class MailingController {
@@ -13,5 +13,10 @@ export class MailingController {
   @OnEvent(VERIFICATION_CODE)
   async sendVerificationEmail(data: any) {
     await this.mailingService.sendVerificationCode(data);
+  }
+
+  @OnEvent(RESET_PASSWORD)
+  async sendResetPasswordEmail(data: any) {
+    await this.mailingService.sendResetPassword(data);
   }
 }

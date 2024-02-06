@@ -10,7 +10,6 @@ import {
 import { hash } from 'bcryptjs';
 import { Picture } from '../../media/entities/picture.entity';
 import { Role } from '../../roles/entities/role.entity';
-import { Verification } from '../../auth/entities/verification.entity';
 
 @Entity('users')
 export class User extends AbstractEntity<User> {
@@ -29,7 +28,7 @@ export class User extends AbstractEntity<User> {
   @Column({ unique: true })
   phone: string;
 
-  @Column({ default: true })
+  @Column({ default: false })
   active: boolean;
 
   @OneToOne(() => Picture, { eager: true })
@@ -39,9 +38,11 @@ export class User extends AbstractEntity<User> {
   @ManyToOne(() => Role, (role: Role) => role.users, { eager: true })
   role: Role;
 
-  @OneToOne(() => Verification, { nullable: true })
-  @JoinColumn()
-  verification: Verification;
+  @Column({ default: false })
+  isVerified: boolean;
+
+  @Column()
+  isLoggedIn: boolean;
   // @OneToMany(() => Payment, (payment) => payment.user)
   // payments: Payment[];
   //

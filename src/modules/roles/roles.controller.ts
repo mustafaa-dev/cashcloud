@@ -7,12 +7,15 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { RolesService } from './roles.service';
 import { AddRoleDto, RoleQueryDto } from '@app/common';
 import { Role } from './entities/role.entity';
+import { JwtGuard } from '../auth/guards/jwt.guard';
 
 @Controller('roles')
+@UseGuards(JwtGuard)
 export class RolesController {
   constructor(private readonly rolesService: RolesService) {}
 

@@ -1,1 +1,1 @@
-export * from './user-registeration.pipe';
+export * from './user-registration.pipe';

@@ -1,7 +1,9 @@
 import {
+  IsBoolean,
   IsEmail,
   IsEnum,
   IsNotEmpty,
+  IsOptional,
   IsPhoneNumber,
   IsString,
 } from 'class-validator';
@@ -33,4 +35,8 @@ export class AddUserDto {
   @IsEnum(ROLES)
   @IsNotEmpty()
   role: string;
+
+  @IsBoolean()
+  @IsOptional()
+  active: boolean;
 }
