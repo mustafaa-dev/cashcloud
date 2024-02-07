@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { Logger } from 'nestjs-pino';
 import { ValidationPipe } from '@nestjs/common';
+import { ApiGatewayErrorFilter } from '@app/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -12,7 +13,7 @@ async function bootstrap() {
   app.useLogger(app.get(Logger));
   app.setGlobalPrefix('api/v4');
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
-  // app.useGlobalFilters(new ApiGatewayErrorFilter());
+  app.useGlobalFilters(new ApiGatewayErrorFilter());
   await app.listen(PORT);
 }
 

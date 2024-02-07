@@ -11,7 +11,7 @@ export class PasswordReset extends AbstractEntity<PasswordReset> {
   @Column()
   passwordResetExpiration: Date;
 
-  @OneToOne(() => User, { nullable: true, eager: true })
+  @OneToOne(() => User, { nullable: true, eager: true, onDelete: 'CASCADE' })
   @JoinColumn()
   user: User;
 

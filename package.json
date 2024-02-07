@@ -18,6 +18,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config test/jest-e2e.json",
+    "test:e2e:watch": "jest --config test/jest-e2e.json --watch",
     "typeorm": "typeorm-ts-node-commonjs -d libs/common/src/database/config/data-source.ts",
     "typeormseed": "typeorm-ts-node-commonjs -d libs/common/src/database/config/data-source-seed.ts",
     "migration:generate": "npm run typeorm -- migration:generate",
@@ -55,7 +56,8 @@
     "pino-http": "^9.0.0",
     "pino-pretty": "^10.3.1",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
@@ -69,6 +71,7 @@
     "@types/passport-jwt": "^4.0.1",
     "@types/passport-local": "^1.0.38",
     "@types/supertest": "^6.0.0",
+    "@types/uuid": "^9.0.8",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "eslint": "^8.42.0",

@@ -41,7 +41,7 @@ export class User extends AbstractEntity<User> {
   @Column({ default: false })
   isVerified: boolean;
 
-  @Column()
+  @Column({ default: false })
   isLoggedIn: boolean;
   // @OneToMany(() => Payment, (payment) => payment.user)
   // payments: Payment[];

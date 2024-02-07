@@ -17,7 +17,7 @@ export class MailingService {
   async sendResetPassword(data: any) {
     const email = data.email;
     delete data.email;
-    return await this.sendEmail(email, 'Reset Password', { ...data });
+    return await this.sendEmail(email, 'Reset Password', data.token);
   }
 
   async sendEmail(to: any, subject: string, text: any) {

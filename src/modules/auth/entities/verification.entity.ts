@@ -11,7 +11,7 @@ export class Verification extends AbstractEntity<Verification> {
   @Column()
   codeExpiration: Date;
 
-  @OneToOne(() => User, { nullable: true, eager: true })
+  @OneToOne(() => User, { nullable: true, eager: true, onDelete: 'CASCADE' })
   @JoinColumn()
   user: User;
 

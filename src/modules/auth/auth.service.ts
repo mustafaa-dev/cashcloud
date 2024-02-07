@@ -41,8 +41,8 @@ export class AuthService {
   async register(
     registerDto: RegisterDto,
     picture: Express.Multer.File,
-  ): Promise<string> {
-    return this.entityManager.transaction(
+  ): Promise<ApiResponse<string>> {
+    const { user, verification } = await this.entityManager.transaction(
       async (transaction: EntityManager) => {
         const verification: Verification = await this.createVerificationSession(
           {
@@ -55,15 +55,16 @@ export class AuthService {
         );
         verification.user = user;
         await transaction.save(verification);
-
-        this.ee.emit(VERIFICATION_CODE, {
-          code: verification.code,
-          email: user.email,
-        });
-        const tokenPayload: TokenPayloadInterface = { id: user.id };
-        return await this.createUserToken(tokenPayload);
+        return { user, verification };
       },
     );
+    this.ee.emit(VERIFICATION_CODE, {
+      code: verification.code,
+      email: user.email,
+    });
+    const tokenPayload: TokenPayloadInterface = { id: user.id };
+    const token = await this.createUserToken(tokenPayload);
+    return sendSuccess(token);
   }
 
   async login(user: User): Promise<ApiResponse<string>> {
@@ -89,10 +90,12 @@ export class AuthService {
     const verificationSession = await this.verificationRepository.findOne({
       where: { code },
     });
+
     if (
-      verificationSession.code === code &&
-      user.id === verificationSession.user.id &&
-      new Date() < verificationSession.codeExpiration
+      verificationSession &&
+      verificationSession?.code === code &&
+      user.id === verificationSession?.user.id &&
+      new Date() < verificationSession?.codeExpiration
     ) {
       return this.entityManager.transaction(
         async (transactionManager: EntityManager) => {
@@ -111,22 +114,24 @@ export class AuthService {
 
   async sendResetPassword({ username }: SendResetPasswordDto) {
     const user: User = await this.usersService.getUserBy({ username });
-    return this.entityManager.transaction(
-      async (transactionManager: EntityManager) => {
-        await transactionManager.delete(PasswordReset, {
-          user: { id: user.id },
-        });
-        const passwordResetSession: PasswordReset =
-          await this.createResetPasswordSession(user);
-        await transactionManager.save(passwordResetSession);
-        this.ee.emit(RESET_PASSWORD, {
-          token: passwordResetSession.passwordResetToken,
-          validTo: passwordResetSession.passwordResetExpiration,
-          email: user.email,
-        });
-        return passwordResetSession;
-      },
-    );
+    const passwordResetSession: PasswordReset =
+      await this.entityManager.transaction(
+        async (transactionManager: EntityManager) => {
+          await transactionManager.delete(PasswordReset, {
+            user: { id: user.id },
+          });
+          const passwordResetSession: PasswordReset =
+            await this.createResetPasswordSession(user);
+          await transactionManager.save(passwordResetSession);
+          return passwordResetSession;
+        },
+      );
+    this.ee.emit(RESET_PASSWORD, {
+      token: `${passwordResetSession.passwordResetToken}`,
+      validTo: passwordResetSession.passwordResetExpiration,
+      email: user.email,
+    });
+    return passwordResetSession;
   }
 
   async resetPassword(
@@ -156,7 +161,7 @@ export class AuthService {
 
   async sendVerification(user: User): Promise<Verification> {
     if (user.isVerified) throw new BadRequestException('Already Verified');
-    return this.entityManager.transaction(
+    const verification = await this.entityManager.transaction(
       async (transactionManager: EntityManager): Promise<Verification> => {
         const verification: Verification = await this.createVerificationSession(
           {
@@ -165,13 +170,14 @@ export class AuthService {
         );
         verification.user = user;
         await transactionManager.save(verification);
-        this.ee.emit(VERIFICATION_CODE, {
-          code: verification.code,
-          email: user.email,
-        });
         return verification;
       },
     );
+    this.ee.emit(VERIFICATION_CODE, {
+      code: verification.code,
+      email: user.email,
+    });
+    return verification;
   }
 
   async createVerificationSession(

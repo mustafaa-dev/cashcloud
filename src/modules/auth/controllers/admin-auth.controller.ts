@@ -21,7 +21,7 @@ import {
   VerificationDto,
 } from '@app/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { AdminRegistrationResponseDto, UserDto } from '@app/common/dtos';
+import { UserDto } from '@app/common/dtos';
 import { User } from '../../users/entities/user.entity';
 import { LocalAuthGuard } from '../guards/local.guard';
 import { JwtGuard } from '../guards/jwt.guard';
@@ -45,11 +45,11 @@ export class AdminAuthController {
 
   @Post('register')
   @UseInterceptors(FileInterceptor('picture'))
-  @Serialize(AdminRegistrationResponseDto)
+  // @Serialize(AdminRegistrationResponseDto)
   async register(
     @UploadedFile() picture: Express.Multer.File,
     @Body(UserRegistrationPipe) registerDto: RegisterDto,
-  ): Promise<string> {
+  ): Promise<ApiResponse<string>> {
     return await this.authService.register(registerDto, picture);
   }
 
