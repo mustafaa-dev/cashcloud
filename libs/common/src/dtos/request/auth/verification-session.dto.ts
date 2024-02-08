@@ -1,7 +1,13 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsDate, IsNotEmpty, IsNumber } from 'class-validator';
 
 export class VerificationSessionDto {
-  @IsString()
   @IsNotEmpty()
-  code: number;
+  verificationCode: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  id: number;
+  @IsDate()
+  @IsNotEmpty()
+  expiration: Date;
 }

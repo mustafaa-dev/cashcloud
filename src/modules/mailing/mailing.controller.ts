@@ -1,22 +1,19 @@
 import { Controller } from '@nestjs/common';
 import { MailingService } from './mailing.service';
-import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
+import { OnEvent } from '@nestjs/event-emitter';
 import { RESET_PASSWORD, VERIFICATION_CODE } from '@app/common';
 
 @Controller()
 export class MailingController {
-  constructor(
-    private readonly mailingService: MailingService,
-    private readonly ee: EventEmitter2,
-  ) {}
+  constructor(private readonly mailingService: MailingService) {}
 
   @OnEvent(VERIFICATION_CODE)
-  async sendVerificationEmail(data: any) {
+  async sendVerificationEmail(data: any): Promise<void> {
     await this.mailingService.sendVerificationCode(data);
   }
 
   @OnEvent(RESET_PASSWORD)
-  async sendResetPasswordEmail(data: any) {
+  async sendResetPasswordEmail(data: any): Promise<void> {
     await this.mailingService.sendResetPassword(data);
   }
 }

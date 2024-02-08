@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { EntityManager, LessThan } from 'typeorm';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { Verification } from '../../../../src/modules/auth/entities/verification.entity';
-import { PasswordReset } from '../../../../src/modules/auth/entities/password-reset.entity';
+import { Verification } from '../../../../../src/modules/auth/entities/verification.entity';
+import { PasswordReset } from '../../../../../src/modules/auth/entities/password-reset.entity';
 
 @Injectable()
 export class CronService {

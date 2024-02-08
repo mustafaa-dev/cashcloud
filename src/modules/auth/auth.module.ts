@@ -4,9 +4,8 @@ import { AdminAuthController } from './controllers/admin-auth.controller';
 import { UsersAuthController } from './controllers/users-auth.controller';
 import { UsersModule } from '../users/users.module';
 import { VerificationRepository } from './repositories/verification.repository';
-import { DatabaseModule } from '@app/common';
+import { DatabaseModule, jwtConfig, RedisModule } from '@app/common';
 import { Verification } from './entities/verification.entity';
-import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { LocalStrategy } from './stratigies/auth.strategy';
 import { JwtStrategy } from './stratigies/jwt.strategy';
@@ -16,19 +15,12 @@ import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [
-    PassportModule.register({ session: true }),
+    RedisModule,
+    PassportModule,
     UsersModule,
     DatabaseModule,
     DatabaseModule.forFeature([Verification, PasswordReset]),
-    JwtModule.registerAsync({
-      useFactory: (configService: ConfigService) => ({
-        secret: configService.getOrThrow<string>('JWT_SECRET'),
-        signOptions: {
-          expiresIn: `${configService.getOrThrow<number>('JWT_EXPIRATION')}`,
-        },
-      }),
-      inject: [ConfigService],
-    }),
+    JwtModule.registerAsync(jwtConfig),
   ],
   providers: [
     AuthService,

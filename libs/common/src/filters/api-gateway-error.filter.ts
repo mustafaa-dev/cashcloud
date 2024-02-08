@@ -1,9 +1,9 @@
 import {
-  Catch,
   ArgumentsHost,
+  Catch,
   ExceptionFilter,
-  HttpStatus,
   HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 
 @Catch()
@@ -41,6 +41,7 @@ export class ApiGatewayErrorFilter implements ExceptionFilter {
     const message = exception.message;
     return { message, status };
   };
+
   catch(exception: any, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const request = ctx.getRequest();

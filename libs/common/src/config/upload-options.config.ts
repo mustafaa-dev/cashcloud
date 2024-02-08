@@ -1,4 +1,4 @@
-import { PICTURE_FORMAT } from '@app/common/media/picture-options.config';
+import { PICTURE_FORMAT } from '@app/common/config/picture-options.config';
 
 export const UploadOptionsConfig: object = {
   return_delete_token: true,

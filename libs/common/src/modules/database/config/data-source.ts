@@ -1,5 +1,11 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
-import { DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USERNAME } from './db';
+import {
+  DB_HOST,
+  DB_NAME,
+  DB_PASSWORD,
+  DB_PORT,
+  DB_USERNAME,
+} from '../../../config/database.config';
 import * as path from 'path';
 
 export const config: DataSourceOptions = {

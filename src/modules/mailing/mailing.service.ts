@@ -10,7 +10,7 @@ export class MailingService {
     return await this.sendEmail(
       data.email,
       'Verification Code',
-      data.code.toString(),
+      JSON.stringify(data.code),
     );
   }
 

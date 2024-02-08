@@ -1,4 +1,4 @@
-import { AbstractEntity } from '../../../../libs/common/src/database/entities/abstract.entity';
+import { AbstractEntity } from '@app/common/modules/database/entities/abstract.entity';
 import {
   BeforeInsert,
   Column,
@@ -41,8 +41,6 @@ export class User extends AbstractEntity<User> {
   @Column({ default: false })
   isVerified: boolean;
 
-  @Column({ default: false })
-  isLoggedIn: boolean;
   // @OneToMany(() => Payment, (payment) => payment.user)
   // payments: Payment[];
   //

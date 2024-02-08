@@ -1,5 +1,5 @@
 import { Column, Entity, JoinTable, ManyToMany, OneToMany } from 'typeorm';
-import { AbstractEntity } from '@app/common/database/entities/abstract.entity';
+import { AbstractEntity } from '@app/common/modules/database/entities/abstract.entity';
 import { Permission } from '../permission/entities/permission.entity';
 import { User } from '../../users/entities/user.entity';
 

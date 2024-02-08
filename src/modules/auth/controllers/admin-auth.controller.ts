@@ -2,9 +2,11 @@ import {
   Body,
   Controller,
   Get,
+  Ip,
   Param,
   Patch,
   Post,
+  Req,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -13,34 +15,40 @@ import { AuthService } from '../auth.service';
 import {
   ApiResponse,
   CurrentUser,
+  LoggedInUserInterface,
   RegisterDto,
+  ResetPasswordDto,
   SendResetPasswordDto,
   Serialize,
+  UserDto,
   UserMapper,
   UserRegistrationPipe,
   VerificationDto,
 } from '@app/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { UserDto } from '@app/common/dtos';
 import { User } from '../../users/entities/user.entity';
 import { LocalAuthGuard } from '../guards/local.guard';
 import { JwtGuard } from '../guards/jwt.guard';
-import { ResetPasswordDto } from '@app/common/dtos/request/auth/reset-password.dto';
 
 @Controller('admin/auth')
+// @UseInterceptors(CacheInterceptor) // Add This here
 export class AdminAuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
   @UseGuards(LocalAuthGuard)
-  async login(@CurrentUser() user: User): Promise<ApiResponse<any>> {
-    return await this.authService.login(user);
+  async login(
+    @Req() req: Request,
+    @Ip() ip: string,
+    @CurrentUser() user: User,
+  ): Promise<ApiResponse<any>> {
+    return await this.authService.login(user, req, ip);
   }
 
   @Get('logout')
   @UseGuards(JwtGuard)
-  async logout(@CurrentUser() user: User): Promise<ApiResponse<any>> {
-    return await this.authService.logout(user);
+  async logout(@CurrentUser() { session_id }: any): Promise<any> {
+    return await this.authService.logout(session_id);
   }
 
   @Post('register')
@@ -58,14 +66,15 @@ export class AdminAuthController {
   async verify(
     @CurrentUser() user: User,
     @Body() verificationDto: VerificationDto,
-  ) {
-    console.log(user.id);
+  ): Promise<User> {
     return await this.authService.verify(verificationDto, user);
   }
 
   @Get('send-verification-code')
   @UseGuards(JwtGuard)
-  async sendVerification(@CurrentUser() user: User) {
+  async sendVerification(
+    @CurrentUser() user: LoggedInUserInterface,
+  ): Promise<any> {
     return await this.authService.sendVerification(user);
   }
 

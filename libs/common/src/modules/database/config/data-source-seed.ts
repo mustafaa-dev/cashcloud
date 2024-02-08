@@ -6,7 +6,7 @@ import {
   DB_PASSWORD,
   DB_PORT,
   DB_USERNAME,
-} from '@app/common/database/config/db';
+} from '@app/common/config/database.config';
 
 export const config: DataSourceOptions = {
   host: DB_HOST,
