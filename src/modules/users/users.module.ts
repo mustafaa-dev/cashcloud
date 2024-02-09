@@ -8,12 +8,7 @@ import { MediaModule } from '../media/media.module';
 import { RolesModule } from '../roles/roles.module';
 
 @Module({
-  imports: [
-    DatabaseModule,
-    DatabaseModule.forFeature([User]),
-    MediaModule,
-    RolesModule,
-  ],
+  imports: [DatabaseModule.forFeature([User]), MediaModule, RolesModule],
   controllers: [UsersController],
   providers: [UsersService, UserRepository],
   exports: [UsersService],

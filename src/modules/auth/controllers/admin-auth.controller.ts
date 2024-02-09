@@ -19,9 +19,6 @@ import {
   RegisterDto,
   ResetPasswordDto,
   SendResetPasswordDto,
-  Serialize,
-  UserDto,
-  UserMapper,
   UserRegistrationPipe,
   VerificationDto,
 } from '@app/common';
@@ -84,11 +81,11 @@ export class AdminAuthController {
   }
 
   @Patch('reset-password/:token')
-  @Serialize(UserDto)
+  // @Serialize(UserDto)
   async resetPassword(
     @Body() resetPasswordDto: ResetPasswordDto,
     @Param('token') token: string,
-  ): Promise<UserMapper> {
+  ): Promise<any> {
     return await this.authService.resetPassword(resetPasswordDto, token);
   }
 }

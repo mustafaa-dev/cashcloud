@@ -8,34 +8,26 @@ import {
   SendResetPasswordDto,
   sendSuccess,
   TokenPayloadInterface,
-  UserMapper,
   VERIFICATION_CODE,
   VerificationDto,
   VerificationSessionDto,
 } from '@app/common';
 import { UsersService } from '../users/users.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { VerificationRepository } from './repositories/verification.repository';
 import { User } from '../users/entities/user.entity';
-import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { EntityManager } from 'typeorm';
-import { createHash, randomBytes } from 'crypto';
-import { PasswordReset } from './entities/password-reset.entity';
-import { PasswordResetRepository } from './repositories/password-reset.repository';
+import { randomBytes } from 'crypto';
 import { hash } from 'bcryptjs';
 import { v4 as uuid } from 'uuid';
 import { addMilliseconds, addMinutes } from 'date-fns';
 import { RedisService } from '@app/common/modules/redis/redis.service';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersService: UsersService,
-    private readonly verificationRepository: VerificationRepository,
-    private readonly passwordResetRepository: PasswordResetRepository,
-    private readonly entityManager: EntityManager,
-    private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
     private readonly ee: EventEmitter2,
     private readonly redisService: RedisService,
@@ -75,12 +67,7 @@ export class AuthService {
       id: user.id,
       session_id: session,
     };
-    const expires: Date = new Date();
-    expires.setMilliseconds(
-      expires.getMilliseconds() + +this.configService.get('JWT_EXPIRATION'),
-    );
     const token: string = await this.createUserToken(tokenPayload);
-
     await this.redisService.saveLogInSession(session, {
       token,
       ip,
@@ -119,50 +106,32 @@ export class AuthService {
 
   async sendResetPassword({ username }: SendResetPasswordDto) {
     const user: User = await this.usersService.getUserBy({ username });
-    const passwordResetSession: PasswordReset =
-      await this.entityManager.transaction(
-        async (transactionManager: EntityManager) => {
-          await transactionManager.delete(PasswordReset, {
-            user: { id: user.id },
-          });
-          const passwordResetSession: PasswordReset =
-            await this.createResetPasswordSession(user);
-          await transactionManager.save(passwordResetSession);
-          return passwordResetSession;
-        },
-      );
+    const passwordResetToken: string =
+      await this.createResetPasswordSession(user);
     this.ee.emit(RESET_PASSWORD, {
-      token: `${passwordResetSession.passwordResetToken}`,
-      validTo: passwordResetSession.passwordResetExpiration,
+      token: `${passwordResetToken}`,
+      validTo: passwordResetToken,
       email: user.email,
     });
-    return passwordResetSession;
+    return { passwordResetToken };
   }
 
   async resetPassword(
     { password }: ResetPasswordDto,
     token: string,
-  ): Promise<UserMapper> {
-    const { user, passwordResetExpiration, passwordResetToken }: PasswordReset =
-      await this.passwordResetRepository.findOne({
-        where: {
-          passwordResetToken: token,
-        },
-      });
-    if (passwordResetExpiration < new Date())
+  ): Promise<any> {
+    const passwordResetSession =
+      await this.redisService.getResetPasswordSession(token);
+    if (!passwordResetSession) throw new BadRequestException('Invalid token');
+    if (passwordResetSession.passwordResetExpiration < new Date())
       throw new BadRequestException('Token Expired');
 
-    return this.entityManager.transaction(
-      async (transaction: EntityManager) => {
-        user.password = await hash(password, 10);
-        await transaction.delete(PasswordReset, { passwordResetToken });
-        await transaction.save(user);
-        const tokenPayload: TokenPayloadInterface = {
-          id: user.id,
-        } as unknown as TokenPayloadInterface;
-        return await this.createUserToken(tokenPayload);
-      },
+    await this.usersService.updateUserBy(
+      { id: passwordResetSession.id },
+      { password: await hash(password, 10) },
     );
+    await this.redisService.deletePasswordResetSession(token);
+    return sendSuccess('Reset Successfully');
   }
 
   async sendVerification(userInterface: any): Promise<any> {
@@ -195,21 +164,25 @@ export class AuthService {
     return await this.usersService.validateUser({ username, password });
   }
 
-  async createUserToken(payload: TokenPayloadInterface) {
+  async createUserToken(payload: TokenPayloadInterface): Promise<string> {
     return this.jwtService.sign(payload, {
-      secret: this.configService.get('JWT_SECRET'),
-      expiresIn: this.configService.get('JWT_EXPIRATION'),
+      privateKey: fs.readFileSync(
+        path.join(__dirname, '..', '..', '..', '..', 'keys', 'private-key.pem'),
+      ),
+      algorithm: 'RS256',
     });
   }
 
-  async createResetPasswordSession(user: User): Promise<PasswordReset> {
-    const token: string = randomBytes(32).toString('hex');
-    const passwordResetToken: string = createHash('sha256')
-      .update(token)
-      .digest('hex');
-    const newPasswordResetSession: PasswordReset = new PasswordReset();
-    Object.assign(newPasswordResetSession, { passwordResetToken });
-    newPasswordResetSession.user = user;
-    return newPasswordResetSession;
+  async createResetPasswordSession(user: User): Promise<any> {
+    const session_id: string = randomBytes(32).toString('hex');
+    // const passwordResetToken: string = createHash('sha256')
+    //   .update(user.id.toString())
+    //   .digest('hex');
+
+    await this.redisService.saveResetPasswordSession(session_id, {
+      id: user.id,
+      passwordResetExpiration: addMinutes(new Date(), 10),
+    });
+    return session_id;
   }
 }

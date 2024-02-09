@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { RedisRepository } from '@app/common/modules/redis/redis.repository';
 import { REDIS_PREFIX } from '@app/common/modules/redis/redis-prefix.enum';
 
-const oneDayInSeconds = 60 * 60 * 24;
+const threeDayInSeconds = 3 * 60 * 60 * 24;
 const tenMinutesInSeconds = 60 * 10;
 
 @Injectable()
@@ -24,12 +24,12 @@ export class RedisService {
   }
 
   async saveResetPasswordSession(
-    userId: string,
+    sessionId: string,
     sessionData: any,
   ): Promise<void> {
     await this.redisRepository.setWithExpiry(
       REDIS_PREFIX.RESET_PASSWORD_SESSION,
-      userId,
+      sessionId,
       JSON.stringify(sessionData),
       tenMinutesInSeconds,
     );
@@ -40,7 +40,7 @@ export class RedisService {
       REDIS_PREFIX.USER_SESSION,
       sessionId,
       JSON.stringify(sessionData),
-      10,
+      threeDayInSeconds,
     );
   }
 
@@ -52,10 +52,10 @@ export class RedisService {
     return JSON.parse(session);
   }
 
-  async getResetPasswordSession(userId: string): Promise<any | null> {
+  async getResetPasswordSession(sessionId: string): Promise<any | null> {
     const session = await this.redisRepository.get(
       REDIS_PREFIX.RESET_PASSWORD_SESSION,
-      userId,
+      sessionId,
     );
     return JSON.parse(session);
   }
@@ -76,6 +76,13 @@ export class RedisService {
   async deleteVerificationSession(sessionId: string): Promise<void> {
     return await this.redisRepository.delete(
       REDIS_PREFIX.VERIFICATION_SESSION,
+      sessionId,
+    );
+  }
+
+  async deletePasswordResetSession(sessionId: string): Promise<void> {
+    return await this.redisRepository.delete(
+      REDIS_PREFIX.RESET_PASSWORD_SESSION,
       sessionId,
     );
   }

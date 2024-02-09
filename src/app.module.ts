@@ -1,15 +1,8 @@
 import { Module } from '@nestjs/common';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
-import {
-  CronModule,
-  DatabaseModule,
-  LoggerModule,
-  RedisModule,
-} from '@app/common';
+import { DatabaseModule, LoggerModule, RedisModule } from '@app/common';
 import { ConfigModule } from '@nestjs/config';
-import { RolesModule } from './modules/roles/roles.module';
-import { MediaModule } from './modules/media/media.module';
 import { MailingModule } from './modules/mailing/mailing.module';
 
 @Module({
@@ -18,11 +11,11 @@ import { MailingModule } from './modules/mailing/mailing.module';
     ConfigModule.forRoot({ isGlobal: true, envFilePath: './.env' }),
     LoggerModule,
     RedisModule,
-    CronModule,
+    // CronModule,
     AuthModule,
     UsersModule,
-    RolesModule,
-    MediaModule,
+    // RolesModule,
+    // MediaModule,
     MailingModule,
   ],
   controllers: [],

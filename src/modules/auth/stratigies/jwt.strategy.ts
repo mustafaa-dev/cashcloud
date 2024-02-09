@@ -7,33 +7,62 @@ import { SessionPayloadInterface, TokenPayloadInterface } from '@app/common';
 import { User } from '../../users/entities/user.entity';
 import { Request } from 'express';
 import { RedisService } from '@app/common/modules/redis/redis.service';
+import * as path from 'path';
+import * as fs from 'fs';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     configService: ConfigService,
     private readonly userService: UsersService,
-    // @Inject(CACHE_MANAGER) private cacheManager: Cache,
     @Inject(RedisService) private readonly redisService: RedisService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: configService.get('JWT_SECRET'),
+      secretOrKey: fs.readFileSync(
+        path.join(
+          __dirname,
+          '..',
+          '..',
+          '..',
+          '..',
+          '..',
+          'keys',
+          'public-key.pem',
+        ),
+      ),
       passReqToCallback: true,
     });
   }
 
-  async validate(req: Request, { id, session_id }: TokenPayloadInterface) {
+  async validate(
+    req: Request,
+    { id, session_id }: TokenPayloadInterface,
+  ): Promise<any> {
+    const { session, browser, user, ip } = await this.getSessionData(
+      id,
+      session_id,
+      req,
+    );
+    if (!session) throw new UnauthorizedException("User isn't logged in");
+    if (browser !== session.browser || ip !== session.ip) {
+      throw new UnauthorizedException(
+        'Different Ip or Browser - Please Login Again',
+      );
+    }
+    return { user, session_id };
+  }
+
+  async getSessionData(
+    id: number,
+    session_id: string,
+    req: Request,
+  ): Promise<any> {
     const user: User = await this.userService.getUserBy({ id });
     const session: SessionPayloadInterface =
       await this.redisService.getLogInSession(session_id);
     const browser: string = req.headers['user-agent'];
     const ip: string = req.socket.remoteAddress;
-    if (!session) throw new UnauthorizedException("User isn't logged in");
-    if (browser !== session.browser || ip !== session.ip) {
-      await this.redisService.deleteLogInSession(session_id);
-      throw new UnauthorizedException('Please Login Again');
-    }
-    return { user, session_id };
+    return { user, session, browser, ip };
   }
 }
