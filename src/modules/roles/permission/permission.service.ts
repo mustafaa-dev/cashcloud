@@ -19,7 +19,7 @@ export class PermissionService {
   ): Promise<Permission[]> {
     console.log(permissionQueryDto);
     const permissions: Permission[] =
-      await this.permissionRepository.find(permissionQueryDto);
+      await this.permissionRepository.findAll(permissionQueryDto);
     return PermissionMapper.mapPermissions(permissions);
   }
 
@@ -30,7 +30,7 @@ export class PermissionService {
       await this.permissionRepository.checkOne({ name: addPermissionDto.name })
     )
       throw new BadRequestException('Already Added');
-    return await this.permissionRepository.create(newPermission);
+    return await this.permissionRepository.createOne(newPermission);
   }
 
   async deletePermission(id: number): Promise<ApiResponse<string>> {

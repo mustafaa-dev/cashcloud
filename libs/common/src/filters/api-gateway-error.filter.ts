@@ -12,7 +12,7 @@ export class ApiGatewayErrorFilter implements ExceptionFilter {
     const status = +err.status || HttpStatus.INTERNAL_SERVER_ERROR;
     response.status(status).json({
       statusCode: HttpStatus.NOT_ACCEPTABLE,
-      message: err,
+      err,
     });
   };
 
@@ -59,7 +59,7 @@ export class ApiGatewayErrorFilter implements ExceptionFilter {
       error = this.handleHttpError(exception);
 
     if (exception instanceof TypeError) error = this.handleTypeError(exception);
-    if (process.env.NODE_ENV === 'dev') {
+    if (process.env.NODE_ENV === 'development') {
       return this.sendErrorDevelopment(exception, response);
     } else return this.sendErrorProduction(error, request, response);
   }

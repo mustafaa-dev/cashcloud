@@ -45,12 +45,16 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       req,
     );
     if (!session) throw new UnauthorizedException("User isn't logged in");
-    if (browser !== session.browser || ip !== session.ip) {
+    if (
+      browser !== session.browser ||
+      ip !== session.ip ||
+      req.headers.authorization.split(' ')[1] !== session.token
+    ) {
       throw new UnauthorizedException(
         'Different Ip or Browser - Please Login Again',
       );
     }
-    return { user, session_id };
+    return { ...user, session_id };
   }
 
   async getSessionData(

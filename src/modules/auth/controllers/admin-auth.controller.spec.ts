@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AdminAuthController } from './admin-auth.controller';
 import { AuthService } from '../auth.service';
 import { sendSuccess } from '@app/common';
-import { User } from '../../users/entities/user.entity';
+import { User } from '../../users';
 
 describe('AdminAuthController', () => {
   let controller: AdminAuthController;

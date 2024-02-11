@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { Reflector } from '@nestjs/core';
+import { Permission } from '../../roles/permission/entities/permission.entity';
 
 @Injectable()
 export class PermissionGuard implements CanActivate {
@@ -14,8 +15,10 @@ export class PermissionGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const userRole = context.switchToHttp().getRequest().user.role;
-    const userPermissions = userRole.has.map((permission) => {
+    const user = context.switchToHttp().getRequest().user;
+    if (user.admin_details?.is_super_admin) return true;
+    const userRole = user.role;
+    const userPermissions = userRole.has.map((permission: Permission) => {
       return permission.name;
     });
     const requiredPermissions =
@@ -24,6 +27,6 @@ export class PermissionGuard implements CanActivate {
       userPermissions.includes(permission),
     );
     if (requiredPermissions.length === 0 || hasPermissions) return true;
-    throw new ForbiddenException('No Permission');
+    throw new ForbiddenException('No Sufficient Permissions for this user');
   }
 }

@@ -5,7 +5,7 @@ import {
   DB_PASSWORD,
   DB_PORT,
   DB_USERNAME,
-} from '../../../config/database.config';
+} from '@app/common';
 import * as path from 'path';
 
 export const config: DataSourceOptions = {
@@ -17,6 +17,7 @@ export const config: DataSourceOptions = {
   database: DB_NAME,
   entities: [path.join('src', '**', '*.entity.{ts}')],
   migrations: [path.join('src', 'migrations', '**', '*.js')],
+  logging: true,
 };
 
 // export const config: DataSourceOptions = {

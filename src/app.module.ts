@@ -4,6 +4,7 @@ import { UsersModule } from './modules/users/users.module';
 import { DatabaseModule, LoggerModule, RedisModule } from '@app/common';
 import { ConfigModule } from '@nestjs/config';
 import { MailingModule } from './modules/mailing/mailing.module';
+import { LicensesModule } from './modules/licenses/licenses.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { MailingModule } from './modules/mailing/mailing.module';
     // RolesModule,
     // MediaModule,
     MailingModule,
+    LicensesModule,
   ],
   controllers: [],
   providers: [],

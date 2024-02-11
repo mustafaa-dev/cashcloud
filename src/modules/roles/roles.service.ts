@@ -24,11 +24,11 @@ export class RolesService {
     Object.assign(newRole, addRoleDto);
     if (await this.roleRepository.checkOne({ name: addRoleDto.name }))
       throw new BadRequestException('Already Added');
-    return await this.roleRepository.create(newRole);
+    return await this.roleRepository.createOne(newRole);
   }
 
   async getRoles(roleQueryDto: RoleQueryDto): Promise<Role[]> {
-    const roles: Role[] = await this.roleRepository.find(roleQueryDto);
+    const roles: Role[] = await this.roleRepository.findAll(roleQueryDto);
     return RoleMapper.mapRoles(roles);
   }
 
@@ -58,7 +58,7 @@ export class RolesService {
     if (found.length) throw new BadRequestException('Already Added');
 
     role.has.push(permission);
-    return await this.roleRepository.create(role);
+    return await this.roleRepository.createOne(role);
   }
 
   async removePermissionFromRole(
@@ -72,7 +72,7 @@ export class RolesService {
     if (!found.length) throw new BadRequestException('Already Removed');
 
     role.has.splice(role.has.indexOf(permission) - 1, 1);
-    return await this.roleRepository.create(role);
+    return await this.roleRepository.createOne(role);
   }
 
   async searchPermissionInRole(roleId: number, permissionId: number) {

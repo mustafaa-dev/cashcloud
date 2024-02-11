@@ -36,7 +36,7 @@ export class MediaService {
       delete_token,
       originalname: picture.originalname,
     });
-    return await this.pictureRepository.create(newPicture);
+    return newPicture;
   }
 
   async uploadStream(pictureBuffer: Buffer): Promise<any> {

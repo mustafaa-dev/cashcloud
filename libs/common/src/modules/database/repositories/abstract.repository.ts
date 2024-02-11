@@ -1,5 +1,10 @@
 import { AbstractEntity } from '@app/common';
-import { EntityManager, FindOptionsWhere, Repository } from 'typeorm';
+import {
+  EntityManager,
+  FindOptionsWhere,
+  Repository,
+  SelectQueryBuilder,
+} from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
@@ -7,12 +12,12 @@ export abstract class AbstractRepository<
   TEntity extends AbstractEntity<TEntity>,
 > {
   protected constructor(
-    private readonly entityRepository: Repository<TEntity>,
-    private readonly entityManager: EntityManager,
-    private notFoundMsg: string,
+    protected readonly entityRepository: Repository<TEntity>,
+    protected readonly entityManager: EntityManager,
+    protected notFoundMsg: string,
   ) {}
 
-  async create(entity: TEntity): Promise<TEntity> {
+  async createOne(entity: TEntity): Promise<TEntity> {
     return await this.entityManager.save(entity);
   }
 
@@ -32,7 +37,7 @@ export abstract class AbstractRepository<
     return await this.entityRepository.save(entity);
   }
 
-  async find(where: FindOptionsWhere<TEntity>) {
+  async findAll(where: FindOptionsWhere<TEntity>) {
     return await this.entityRepository.find({ where });
   }
 
@@ -45,5 +50,13 @@ export abstract class AbstractRepository<
 
   async checkOne(where: FindOptionsWhere<TEntity>) {
     return await this.entityRepository.findOneBy(where);
+  }
+
+  createQueryBuilder(alias: string): SelectQueryBuilder<TEntity> {
+    return this.entityRepository.createQueryBuilder(alias);
+  }
+
+  async saveOne(entity: TEntity) {
+    return await this.entityRepository.save(entity);
   }
 }

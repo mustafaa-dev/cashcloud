@@ -9,3 +9,4 @@ export * from './events';
 export * from './utils';
 export * from './config';
 export * from './modules';
+export * from './pagination';

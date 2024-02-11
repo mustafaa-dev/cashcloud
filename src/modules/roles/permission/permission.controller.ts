@@ -7,6 +7,7 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { PermissionService } from './permission.service';
 import {
@@ -16,8 +17,10 @@ import {
   sendSuccess,
 } from '@app/common';
 import { Permission } from './entities/permission.entity';
+import { JwtGuard } from '../../auth/guards/jwt.guard';
 
 @Controller('permission')
+@UseGuards(JwtGuard)
 export class PermissionController {
   constructor(private readonly permissionService: PermissionService) {}
 

@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { RolesService } from './roles.service';
-import { AddRoleDto, RoleQueryDto } from '@app/common';
+import { AddRoleDto, Public, RoleQueryDto } from '@app/common';
 import { Role } from './entities/role.entity';
 import { JwtGuard } from '../auth/guards/jwt.guard';
 
@@ -20,6 +20,7 @@ export class RolesController {
   constructor(private readonly rolesService: RolesService) {}
 
   @Get()
+  @Public()
   async getRoles(@Query() query: RoleQueryDto): Promise<Role[]> {
     return await this.rolesService.getRoles(query);
   }

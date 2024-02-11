@@ -37,7 +37,7 @@ export class AuthService {
     registerDto: RegisterDto,
     picture: Express.Multer.File,
   ): Promise<ApiResponse<string>> {
-    const user: User = await this.usersService.addUser(
+    const user: User = await this.usersService.addAdmin(
       { ...registerDto, active: false, role: 'admin' },
       picture,
     );

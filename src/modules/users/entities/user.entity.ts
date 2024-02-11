@@ -10,6 +10,8 @@ import {
 import { hash } from 'bcryptjs';
 import { Picture } from '../../media/entities/picture.entity';
 import { Role } from '../../roles/entities/role.entity';
+import { ClientDetails } from './client-details.entity';
+import { AdminDetails } from './admin-details.entity';
 
 @Entity('users')
 export class User extends AbstractEntity<User> {
@@ -40,6 +42,26 @@ export class User extends AbstractEntity<User> {
 
   @Column({ default: false })
   isVerified: boolean;
+
+  @Column({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+    select: false,
+  })
+  passwordChangedAt: Date;
+
+  @OneToOne(() => ClientDetails, {
+    eager: true,
+    nullable: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  @JoinColumn()
+  client_details?: ClientDetails;
+
+  @OneToOne(() => AdminDetails, { eager: true, nullable: true })
+  @JoinColumn()
+  admin_details: AdminDetails;
 
   // @OneToMany(() => Payment, (payment) => payment.user)
   // payments: Payment[];

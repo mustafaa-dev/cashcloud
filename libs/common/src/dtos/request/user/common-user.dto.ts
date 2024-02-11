@@ -16,7 +16,7 @@ enum ROLES {
   SUPERVISOR = 'supervisor',
 }
 
-export class AddUserDto {
+export class CommonUserDto {
   @IsString()
   @IsNotEmpty()
   name: string;
@@ -35,7 +35,6 @@ export class AddUserDto {
   @IsEnum(ROLES)
   @IsNotEmpty()
   role: string;
-
   @IsBoolean()
   @IsOptional()
   active: boolean;
