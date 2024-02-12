@@ -4,16 +4,16 @@ import { UsersService } from './users.service';
 import { DatabaseModule } from '@app/common';
 import { AdminDetails, ClientDetails, User } from './entities';
 import { ClientDetailsRepository, UserRepository } from './repositories';
-import { MediaModule } from '../media/media.module';
-import { RolesModule } from '../roles/roles.module';
 import { AdminDetailsRepository } from './repositories/admin-details.repository';
-import { LicensesModule } from '../licenses';
+import { LicensesModule } from '@app/license/licenses.module';
+import { MediaModule } from '@app/media';
+import { RolesModule } from '@app/roles/roles.module';
 
 @Module({
   imports: [
     DatabaseModule.forFeature([User, AdminDetails, ClientDetails]),
-    MediaModule,
     RolesModule,
+    MediaModule,
     LicensesModule,
   ],
   controllers: [UsersController],

@@ -17,7 +17,7 @@ import {
   sendSuccess,
 } from '@app/common';
 import { Permission } from './entities/permission.entity';
-import { JwtGuard } from '../../auth/guards/jwt.guard';
+import { JwtGuard } from '@app/auth/guards/jwt.guard';
 
 @Controller('permission')
 @UseGuards(JwtGuard)

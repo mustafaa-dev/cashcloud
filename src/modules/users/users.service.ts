@@ -24,15 +24,13 @@ import {
 } from '@app/common';
 import { ClientDetails, User } from './entities';
 import { MediaService } from '../media/media.service';
-import { RolesService } from '../roles/roles.service';
 import { generateNumber } from '@app/common/utils';
-import { Picture } from '../media/entities/picture.entity';
-import { Role } from '../roles/entities/role.entity';
+import { Picture } from '../media';
 import { compare } from 'bcryptjs';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { EntityManager } from 'typeorm';
-import { LicensesService } from '../licenses/licenses.service';
-import { License } from '../licenses';
+import { LicensesService } from '@app/license/licenses.service';
+import { License } from '@app/license/entities';
 import {
   paginate,
   Paginated,
@@ -40,6 +38,8 @@ import {
   PaginationType,
 } from 'nestjs-paginate';
 import { Column } from 'nestjs-paginate/lib/helper';
+import { RolesService } from '@app/roles/roles.service';
+import { Role } from '@app/roles/entities';
 
 @Injectable()
 export class UsersService {
@@ -165,4 +165,10 @@ export class UsersService {
       );
     return user;
   }
+
+  // async getUserLocation() {
+  //   const response = await axios.get('https://ipapi.co/json/');
+  //   const { latitude, longitude } = response.data;
+  //   return { latitude, longitude };
+  // }
 }

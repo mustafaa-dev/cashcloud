@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
-import { RolesService } from './roles.service';
-import { RoleRepository } from './repositories/role.repository';
-import { RolesController } from './roles.controller';
+
 import { DatabaseModule } from '@app/common';
-import { Role } from './entities/role.entity';
-import { PermissionModule } from './permission/permission.module';
+import { PermissionModule } from '@app/roles/permission/permission.module';
+import { RolesService } from '@app/roles/roles.service';
+import { Role } from '@app/roles/entities';
+import { RoleRepository } from '@app/roles/repositories';
+import { RolesController } from '@app/roles/roles.controller';
 
 @Module({
   imports: [DatabaseModule.forFeature([Role]), PermissionModule],

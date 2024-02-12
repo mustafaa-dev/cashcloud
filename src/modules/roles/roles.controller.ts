@@ -12,7 +12,7 @@ import {
 import { RolesService } from './roles.service';
 import { AddRoleDto, Public, RoleQueryDto } from '@app/common';
 import { Role } from './entities/role.entity';
-import { JwtGuard } from '../auth/guards/jwt.guard';
+import { JwtGuard } from '@app/auth/guards/jwt.guard';
 
 @Controller('roles')
 @UseGuards(JwtGuard)

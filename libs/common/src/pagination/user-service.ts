@@ -1,5 +1,5 @@
 import { Column } from 'nestjs-paginate/lib/helper';
-import { User } from '../../../../src/modules/users';
+import { User } from '../../../../src/modules/users/entities';
 import { FilterOperator, FilterSuffix } from 'nestjs-paginate';
 
 export const ADMIN_RELATIONS: Column<User>[] = [

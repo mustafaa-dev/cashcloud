@@ -3,8 +3,6 @@ import { AuthService } from './auth.service';
 import { User } from '../users/entities/user.entity';
 import { sendSuccess } from '@app/common';
 import { UsersService } from '../users/users.service';
-import { VerificationRepository } from './repositories/verification.repository';
-import { PasswordResetRepository } from './repositories/password-reset.repository';
 import { EntityManager } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';

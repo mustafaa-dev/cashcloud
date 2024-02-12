@@ -8,8 +8,8 @@ import {
   OneToOne,
 } from 'typeorm';
 import { hash } from 'bcryptjs';
-import { Picture } from '../../media/entities/picture.entity';
-import { Role } from '../../roles/entities/role.entity';
+import { Picture } from '@app/media';
+import { Role } from '@app/roles/entities';
 import { ClientDetails } from './client-details.entity';
 import { AdminDetails } from './admin-details.entity';
 
@@ -78,9 +78,6 @@ export class User extends AbstractEntity<User> {
   // @JoinColumn()
   // shift: Shift;
 
-  // @OneToOne(() => PasswordReset, (pr) => pr.user)
-  // @JoinColumn()
-  // password_reset: PasswordReset;
   @BeforeInsert()
   async saving() {
     this.password = await hash(this.password, 10);

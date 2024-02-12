@@ -1,3 +1,1 @@
-export * from './entities';
-export * from './licenses.module';
-export * from './repositories';
+// export * from './licenses.module';

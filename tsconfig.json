@@ -23,6 +23,54 @@
       ],
       "@app/common/*": [
         "libs/common/src/*"
+      ],
+      "@app/auth": [
+        "src/modules/auth"
+      ],
+      "@app/auth/*": [
+        "src/modules/auth/*"
+      ],
+      "@app/license": [
+        "src/modules/licenses"
+      ],
+      "@app/license/*": [
+        "src/modules/licenses/*"
+      ],
+      "@app/mailing": [
+        "src/modules/mailing"
+      ],
+      "@app/mailing/*": [
+        "src/modules/mailing/*"
+      ],
+      "@app/media": [
+        "src/modules/media"
+      ],
+      "@app/media/*": [
+        "src/modules/media/*"
+      ],
+      "@app/payments": [
+        "src/modules/payments"
+      ],
+      "@app/payments/*": [
+        "src/modules/payments/*"
+      ],
+      "@app/roles": [
+        "src/modules/roles"
+      ],
+      "@app/roles/*": [
+        "src/modules/roles/*"
+      ],
+      "@app/stores": [
+        "src/modules/stores"
+      ],
+      "@app/stores/*": [
+        "src/modules/stores/*"
+      ],
+      "@app/users": [
+        "src/modules/users"
+      ],
+      "@app/users/*": [
+        "src/modules/users/*"
       ]
     }
   }

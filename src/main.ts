@@ -2,10 +2,13 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { Logger } from 'nestjs-pino';
-import { ValidationPipe } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { SpelunkerModule } from 'nestjs-spelunker';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app: INestApplication<AppModule> = await NestFactory.create(AppModule);
+  console.log(SpelunkerModule.explore(app));
+
   const configService = app.get(ConfigService);
   const PORT = configService.getOrThrow('PORT');
   app.enableCors();

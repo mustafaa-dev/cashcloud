@@ -32,7 +32,7 @@ export abstract class AbstractRepository<
     update: QueryDeepPartialEntity<TEntity>,
   ) {
     const entity = await this.entityRepository.findOne({ where });
-    if (!entity) throw new NotFoundException('Not found');
+    if (!entity) throw new NotFoundException(this.notFoundMsg);
     Object.assign(entity, update);
     return await this.entityRepository.save(entity);
   }
@@ -44,7 +44,7 @@ export abstract class AbstractRepository<
   async findOneAndDelete(where: FindOptionsWhere<TEntity>) {
     const { affected } = await this.entityRepository.delete(where);
     if (affected <= 0)
-      throw new NotFoundException('Error While Deleting , Not found');
+      throw new NotFoundException(`Error While Deleting , ${this.notFoundMsg}`);
     return;
   }
 

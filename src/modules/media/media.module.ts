@@ -5,11 +5,10 @@ import { DatabaseModule } from '@app/common';
 import { MulterModule } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import { PictureRepository } from './repositories/picture.repository';
-import { Picture } from './entities/picture.entity';
+import { Picture } from '@app/media/entities';
 
 @Module({
   imports: [
-    DatabaseModule,
     DatabaseModule.forFeature([Picture]),
     MulterModule.register({
       storage: memoryStorage(),

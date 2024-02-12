@@ -24,8 +24,8 @@ import {
 } from '@app/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { User } from '../../users/entities/user.entity';
-import { LocalAuthGuard } from '../guards/local.guard';
-import { JwtGuard } from '../guards/jwt.guard';
+import { LocalAuthGuard } from '@app/auth/guards/local.guard';
+import { JwtGuard } from '@app/auth/guards/jwt.guard';
 
 @Controller('admin/auth')
 // @UseInterceptors(CacheInterceptor) // Add This here

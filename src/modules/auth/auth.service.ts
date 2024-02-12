@@ -1,7 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import {
   ApiResponse,
   generateNumber,
+  RedisService,
   RegisterDto,
   RESET_PASSWORD,
   ResetPasswordDto,
@@ -12,15 +13,13 @@ import {
   VerificationDto,
   VerificationSessionDto,
 } from '@app/common';
-import { UsersService } from '../users/users.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { User } from '../users/entities/user.entity';
+import { User, UsersService } from '@app/users';
 import { JwtService } from '@nestjs/jwt';
 import { randomBytes } from 'crypto';
 import { hash } from 'bcryptjs';
 import { v4 as uuid } from 'uuid';
 import { addMilliseconds, addMinutes } from 'date-fns';
-import { RedisService } from '@app/common/modules/redis/redis.service';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -30,7 +29,7 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
     private readonly ee: EventEmitter2,
-    private readonly redisService: RedisService,
+    @Inject(RedisService) private readonly redisService: RedisService,
   ) {}
 
   async register(

@@ -1,6 +1,6 @@
 import { Entity, JoinColumn, OneToOne } from 'typeorm';
 import { AbstractEntity } from '@app/common';
-import { License } from '../../licenses';
+import { License } from '@app/license/entities';
 
 @Entity('client_details')
 export class ClientDetails extends AbstractEntity<ClientDetails> {
