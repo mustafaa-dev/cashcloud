@@ -2,8 +2,8 @@ import { forwardRef, Module } from '@nestjs/common';
 import { LicensesController } from './licenses.controller';
 import { LicensesService } from './licenses.service';
 import { DatabaseModule } from '@app/common';
-import { License } from './entities';
-import { LicenseRepository } from './repositories';
+import { License } from './entities/license.entity';
+import { LicenseRepository } from './repositories/license.repository';
 import { StoresModule } from '@app/stores';
 
 @Module({

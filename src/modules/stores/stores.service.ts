@@ -3,14 +3,12 @@ import { StoreRepository } from '@app/stores/repositories/store.repository';
 import { Store } from '@app/stores/entities';
 import { StoreTypesService } from '@app/stores/modules/store-types/store-types.service';
 import { AddStoreAdminDto } from '@app/common';
-import { LicensesService } from '@app/license/licenses.service';
 
 @Injectable()
 export class StoresService {
   constructor(
     private readonly storeRepository: StoreRepository,
     private readonly storeTypeService: StoreTypesService,
-    private readonly licenseService: LicensesService,
   ) {}
 
   async addStore(addStoreAdminDto: AddStoreAdminDto) {

@@ -30,7 +30,7 @@ import { compare } from 'bcryptjs';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { EntityManager } from 'typeorm';
 import { LicensesService } from '@app/license/licenses.service';
-import { License } from '@app/license/entities';
+import { License } from '@app/license/entities/license.entity';
 import {
   paginate,
   Paginated,

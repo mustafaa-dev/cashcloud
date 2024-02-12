@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { LicenseRepository } from './repositories';
-import { License } from './entities';
+import { LicenseRepository } from './repositories/license.repository';
+import { License } from './entities/license.entity';
 import { addMonths } from 'date-fns';
 import {
   paginate,

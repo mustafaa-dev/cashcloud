@@ -1,7 +1,7 @@
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
 import { AbstractEntity } from '@app/common';
 import { AdminDetails } from '@app/users';
-import { License } from '@app/license/entities';
+import { License } from '@app/license/entities/license.entity';
 
 @Entity('payments')
 export class Payment extends AbstractEntity<Payment> {

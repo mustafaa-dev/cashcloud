@@ -24,7 +24,7 @@ import { AddressesModule } from './modules/addresses/addresses.module';
     PaymentsModule,
     StoresModule,
     AddressesModule,
-    // // CronModule,
+    // CronModule,
   ],
 })
 export class AppModule {}

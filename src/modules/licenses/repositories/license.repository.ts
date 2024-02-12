@@ -1,5 +1,5 @@
 import { AbstractRepository } from '@app/common';
-import { License } from '../entities';
+import { License } from '../entities/license.entity';
 import { EntityManager, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 

@@ -2,8 +2,8 @@ import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
 import { AbstractEntity } from '@app/common';
 import { City } from '../modules/cities/entities/city.entity';
 import { StoreType } from '../modules/store-types/entites/store-types.entity';
-import { License } from '@app/license/entities';
 import { Address } from '../../addresses/entities/address.entity';
+import { License } from '@app/license/entities/license.entity';
 
 @Entity('stores')
 export class Store extends AbstractEntity<Store> {
@@ -31,8 +31,9 @@ export class Store extends AbstractEntity<Store> {
 
   @ManyToOne(() => City, (city) => city.stores)
   city: City;
-  @ManyToOne(() => License, (license) => license.stores)
-  license: License;
+  @ManyToMany(() => License)
+  @JoinTable()
+  owned_by: License;
   @ManyToOne(() => StoreType, (storeType) => storeType.stores)
   store_type: StoreType;
 }
