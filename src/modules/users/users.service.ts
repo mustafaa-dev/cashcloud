@@ -22,7 +22,7 @@ import {
   USER_SELECTABLE,
   USER_SORTABLE_COLUMN,
 } from '@app/common';
-import { ClientDetails, User } from './entities';
+import { AdminDetails, ClientDetails, User } from './entities';
 import { MediaService } from '../media/media.service';
 import { generateNumber } from '@app/common/utils';
 import { Picture } from '@app/media/entities';
@@ -63,11 +63,14 @@ export class UsersService {
       }
       const role: Role = await this.rolesService.getRoleBy({ name: 'admin' });
       const newUser: User = new User();
+      const newAdminDetails: AdminDetails = new AdminDetails();
       Object.assign(newUser, {
         ...addAdminDto,
         picture: userPicture,
         role,
+        admin_details: newAdminDetails,
       });
+      await transaction.save(newAdminDetails);
       return await transaction.save(newUser);
     });
   }

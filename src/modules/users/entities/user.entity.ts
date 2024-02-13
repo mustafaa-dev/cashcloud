@@ -59,7 +59,12 @@ export class User extends AbstractEntity<User> {
   @JoinColumn()
   client_details?: ClientDetails;
 
-  @OneToOne(() => AdminDetails, { eager: true, nullable: true })
+  @OneToOne(() => AdminDetails, {
+    eager: true,
+    nullable: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   @JoinColumn()
   admin_details: AdminDetails;
 

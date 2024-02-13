@@ -19,6 +19,18 @@ services:
     networks:
       - backend
 
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: root
+      PMA_PASSWORD: toor
+    ports:
+      - "8080:80"
+    networks:
+      - backend
+
   api:
     build:
       context: .

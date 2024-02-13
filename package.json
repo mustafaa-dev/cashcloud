@@ -27,8 +27,7 @@
     "db:drop": "npm run typeorm schema:drop",
     "db:create": "npm run typeorm migration:generate ---n",
     "db:migrate": "npm run typeorm migration:run",
-    "db:seed": "npm run typeormseed migration:run",
-    "db:reset": "npm run db:drop && npm run db:migrate && npm run db:seed && nodemon"
+    "seed": "ts-node -r tsconfig-paths/register libs/common/src/seeds/seed.ts"
   },
   "dependencies": {
     "@nestjs/cache-manager": "^2.2.1",

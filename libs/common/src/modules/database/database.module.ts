@@ -29,7 +29,7 @@ import { config } from '@app/common/modules/database/config';
       useFactory: () => ({
         ...config,
         // autoLoadEntities: true,
-        // synchronize: true,
+        synchronize: true,
       }),
     }),
   ],

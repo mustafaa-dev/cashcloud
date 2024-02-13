@@ -2,7 +2,7 @@ import { forwardRef, Module } from '@nestjs/common';
 import { LicensesController } from './licenses.controller';
 import { LicensesService } from './licenses.service';
 import { DatabaseModule } from '@app/common';
-import { License } from './entities/license.entity';
+import { License } from '@app/license/entities';
 import { LicenseRepository } from '@app/license/repositories/license.repository';
 import { StoresModule } from '@app/stores';
 
