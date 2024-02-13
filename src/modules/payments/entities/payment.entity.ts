@@ -1,7 +1,7 @@
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
-import { AbstractEntity } from '@app/common';
-import { AdminDetails } from '@app/users';
-import { License } from '@app/license/entities/license.entity';
+import { Column, Entity, ManyToOne } from 'typeorm';
+import { AbstractEntity } from './../../../../libs/common/src/modules/database/entities/abstract.entity';
+import { AdminDetails } from '@app/users/entities';
+import { License } from '@app/license/entities';
 
 @Entity('payments')
 export class Payment extends AbstractEntity<Payment> {
@@ -10,11 +10,10 @@ export class Payment extends AbstractEntity<Payment> {
   })
   admin: AdminDetails;
 
-  @ManyToMany(() => License, {
-    cascade: true,
+  @ManyToOne(() => License, (license: License) => license.paid, {
+    eager: true,
   })
-  @JoinTable()
-  for: License;
+  license: License;
 
   @Column()
   total: number;

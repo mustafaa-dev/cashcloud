@@ -1,4 +1,4 @@
-import { AbstractEntity } from '@app/common/modules/database/entities/abstract.entity';
+import { AbstractEntity } from './../../../../libs/common/src/modules/database/entities/abstract.entity';
 import {
   BeforeInsert,
   Column,
@@ -8,7 +8,7 @@ import {
   OneToOne,
 } from 'typeorm';
 import { hash } from 'bcryptjs';
-import { Picture } from '@app/media';
+import { Picture } from '@app/media/entities';
 import { Role } from '@app/roles/entities';
 import { ClientDetails } from './client-details.entity';
 import { AdminDetails } from './admin-details.entity';
@@ -62,6 +62,9 @@ export class User extends AbstractEntity<User> {
   @OneToOne(() => AdminDetails, { eager: true, nullable: true })
   @JoinColumn()
   admin_details: AdminDetails;
+
+  @Column({ nullable: true, default: null })
+  twoFA: string;
 
   // @OneToMany(() => Payment, (payment) => payment.user)
   // payments: Payment[];

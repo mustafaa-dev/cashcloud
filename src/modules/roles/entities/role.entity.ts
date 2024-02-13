@@ -1,7 +1,7 @@
 import { Column, Entity, JoinTable, ManyToMany, OneToMany } from 'typeorm';
 import { AbstractEntity } from '@app/common';
 import { Permission } from '@app/roles/permission/entities';
-import { User } from '@app/users';
+import { User } from '@app/users/entities';
 
 @Entity('roles')
 export class Role extends AbstractEntity<Role> {

@@ -3,7 +3,7 @@ import { LicensesController } from './licenses.controller';
 import { LicensesService } from './licenses.service';
 import { DatabaseModule } from '@app/common';
 import { License } from './entities/license.entity';
-import { LicenseRepository } from './repositories/license.repository';
+import { LicenseRepository } from '@app/license/repositories/license.repository';
 import { StoresModule } from '@app/stores';
 
 @Module({

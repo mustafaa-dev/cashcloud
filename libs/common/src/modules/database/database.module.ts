@@ -28,8 +28,8 @@ import { config } from '@app/common/modules/database/config';
     TypeOrmModule.forRootAsync({
       useFactory: () => ({
         ...config,
-        autoLoadEntities: true,
-        synchronize: true,
+        // autoLoadEntities: true,
+        // synchronize: true,
       }),
     }),
   ],

@@ -77,4 +77,14 @@ export class LicensesController {
   ) {
     return await this.licensesService.extendLicense(id, months, user);
   }
+
+  @Get(':id/pay/:months')
+  @setPermissions(['read_extend_license'])
+  async extendLicenseInfo(
+    @CurrentUser() user: LoggedInUserInterface,
+    @Param('id') id: number,
+    @Param('months') months: number,
+  ) {
+    return await this.licensesService.extendLicenseInfo(id, months);
+  }
 }

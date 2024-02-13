@@ -25,7 +25,7 @@ import {
 import { ClientDetails, User } from './entities';
 import { MediaService } from '../media/media.service';
 import { generateNumber } from '@app/common/utils';
-import { Picture } from '../media';
+import { Picture } from '@app/media/entities';
 import { compare } from 'bcryptjs';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { EntityManager } from 'typeorm';

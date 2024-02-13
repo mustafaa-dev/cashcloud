@@ -6,9 +6,9 @@ import { PaymentsModule } from '@app/payments';
 import { StoresModule } from '@app/stores/stores.module';
 import { AuthModule } from '@app/auth';
 import { UsersModule } from '@app/users';
-import { LicensesModule } from '@app/license/licenses.module';
 import { MediaModule } from '@app/media';
-import { AddressesModule } from './modules/addresses/addresses.module';
+import { AddressesModule } from './modules/addresses';
+import { LicensesModule } from '@app/license';
 
 @Module({
   imports: [

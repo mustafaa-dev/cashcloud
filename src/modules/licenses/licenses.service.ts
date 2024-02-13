@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { LicenseRepository } from './repositories/license.repository';
-import { License } from './entities/license.entity';
+import { LicenseRepository } from '@app/license/repositories';
+import { License } from '@app/license/entities';
 import { addMonths } from 'date-fns';
 import {
   paginate,
@@ -8,11 +8,13 @@ import {
   PaginateQuery,
   PaginationType,
 } from 'nestjs-paginate';
-import { User } from '@app/users';
+import { User } from '@app/users/entities';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { LoggedInUserInterface } from '@app/common';
 import { EntityManager } from 'typeorm';
-import { Payment } from '../payments';
+import { Payment } from '@app/payments/entities';
+import { Store } from '@app/stores/entities';
+import { StoreType } from '@app/stores/modules/store-types/entites/store-types.entity';
 
 @Injectable()
 export class LicensesService {
@@ -34,7 +36,10 @@ export class LicensesService {
   async getLicenseBy(
     options: QueryDeepPartialEntity<License>,
   ): Promise<License> {
-    return this.licenseRepository.findOne({ where: options });
+    return this.licenseRepository.findOne({
+      where: options,
+      relations: ['paid'],
+    });
   }
 
   async getLicenses(query: PaginateQuery): Promise<Paginated<License>> {
@@ -76,31 +81,15 @@ export class LicensesService {
     id: number,
     storesNumber: number,
   ): Promise<License> {
+    const license: License = await this.getLicenseBy({ id });
+    if (license.no_of_stores > storesNumber)
+      throw new BadRequestException(
+        `Please remove ${license.no_of_stores - storesNumber} stores first`,
+      );
     return await this.licenseRepository.findOneAndUpdate(
       { id },
       { no_of_stores: storesNumber },
     );
-  }
-
-  async editLicense(
-    id: number,
-    noOfStores: number,
-    loggedInUser: LoggedInUserInterface,
-  ) {
-    const license = await this.getLicenseBy({ id });
-    // if (license.no_of_stores.length <= noOfStores) license.noOfStores = noOfStores;
-    // else
-    //   throw new BadRequestException(
-    //     `Please remove ${license.stores.length - noOfStores} first`,
-    //   );
-    // const data = await this.licenseRepository.save(license);
-    // await this.logService.addLog(
-    //   null,
-    //   loggedInUser,
-    //   'Edit License',
-    //   `User Edited license ${license.code} stores with ${license.noOfStores} `,
-    // );
-    // return data;
   }
 
   async extendLicense(
@@ -109,47 +98,50 @@ export class LicensesService {
     loggedInUser: LoggedInUserInterface,
   ): Promise<any> {
     const license: License = await this.getLicenseBy({ id });
-    const licenseCost = (await this.extendLicenseInfo(id, duration)).Costs;
+    const licenseCost = await this.extendLicenseInfo(id, duration);
     license.expiresAt = addMonths(license.expiresAt, duration);
-    return this.entityManager.transaction(async (transaction) => {
-      const newPayment: Payment = new Payment();
-      Object.assign(newPayment, {
-        user: loggedInUser.admin_details,
-        for: license,
-        total: licenseCost['TotalCost'],
-      });
-      console.log(newPayment, 'newPayment');
-      // await this.paymentRepository.save(newPayment);
-      // license.payments.push(newPayment);
-      // await this.licenseRepository.save(license);
-      // await this.logService.addLog(
-      //   null,
-      //   loggedInUser,
-      //   'Extend License',
-      //   `User extended license ${license.code} with ${duration} for ${
-      //     duration * licenseCost['TotalCost']
-      //   }`,
-      // );
-    });
+    return this.entityManager.transaction(
+      async (transaction: EntityManager) => {
+        const newPayment: Payment = new Payment();
+        Object.assign(newPayment, {
+          admin: loggedInUser.admin_details,
+          license: license,
+          total: licenseCost.TotalCost,
+        });
+        await transaction.save(license);
+        return await transaction.save(newPayment);
+
+        // await this.logService.addLog(
+        //   null,
+        //   loggedInUser,
+        //   'Extend License',
+        //   `User extended license ${license.code} with ${duration} for ${
+        //     duration * licenseCost['TotalCost']
+        //   }`,
+        // );
+      },
+    );
   }
 
   async extendLicenseInfo(id: number, duration: number): Promise<any> {
-    const license = await this.getLicenseBy({ id });
+    const license: License = await this.getLicenseBy({ id });
     const Types = await this.getLicenseStoreTypes(license);
     const licenseCost = await this.calculateLicenseCost(license, duration);
-
-    // return this.buildLicenseInfoResponse(Types, licenseCost);
+    return { Types, ...licenseCost };
   }
 
   async calculateLicenseCost(license: License, duration: number): Promise<any> {
-    // const Costs = license.stores
-    //   .map((store) => store.type)
-    //   .map((type) => type.cost);
-    // const TotalCost = duration * Costs.reduce((acc, num) => acc + num, 0);
-    // return { Costs, TotalCost };
+    const Costs: number[] = license.stores
+      .map((store: Store) => store.store_type)
+      .map((type: StoreType) => type.cost);
+    const TotalCost: number =
+      duration * Costs.reduce((acc: number, num: number) => acc + num, 0);
+    return { Costs, TotalCost };
   }
 
   async getLicenseStoreTypes(license: License): Promise<any> {
-    // return license.stores.map((store) => store.type).map((type) => type.name);
+    return license.stores
+      .map((store: Store) => store.store_type)
+      .map((type: StoreType) => type.name);
   }
 }

@@ -86,4 +86,25 @@ export class RedisService {
       sessionId,
     );
   }
+
+  async saveUser2FASecret(sessionId: string, secret: any): Promise<void> {
+    await this.redisRepository.setWithExpiry(
+      REDIS_PREFIX.USER_2FA,
+      sessionId,
+      JSON.stringify(secret),
+      tenMinutesInSeconds,
+    );
+  }
+
+  async getUser2FASecret(sessionId: string): Promise<any | null> {
+    const session = await this.redisRepository.get(
+      REDIS_PREFIX.USER_2FA,
+      sessionId,
+    );
+    return JSON.parse(session);
+  }
+
+  async deleteUser2FASecret(sessionId: string): Promise<any | null> {
+    await this.redisRepository.delete(REDIS_PREFIX.USER_2FA, sessionId);
+  }
 }

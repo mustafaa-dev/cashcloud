@@ -7,14 +7,13 @@ import { CityRepository } from './repositories/city.repository';
 import axios from 'axios';
 import { City } from './entities/city.entity';
 import { generateSlug } from '@app/common/utils/generateSlug';
-import { AddCityDto } from '@app/common';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 @Injectable()
 export class CitiesService {
   constructor(private readonly cityRepository: CityRepository) {}
 
-  async addCity({ city, government }: AddCityDto) {
+  async addCity({ city, government }: any) {
     if (
       await this.cityRepository.checkOne({
         name: city.toLowerCase(),

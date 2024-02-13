@@ -2,6 +2,7 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import {
   ApiResponse,
   generateNumber,
+  LoggedInUserInterface,
   RedisService,
   RegisterDto,
   RESET_PASSWORD,
@@ -14,7 +15,6 @@ import {
   VerificationSessionDto,
 } from '@app/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { User, UsersService } from '@app/users';
 import { JwtService } from '@nestjs/jwt';
 import { randomBytes } from 'crypto';
 import { hash } from 'bcryptjs';
@@ -22,6 +22,10 @@ import { v4 as uuid } from 'uuid';
 import { addMilliseconds, addMinutes } from 'date-fns';
 import * as fs from 'fs';
 import * as path from 'path';
+import { UsersService } from '@app/users/users.service';
+import { User } from '@app/users/entities';
+import * as speakeasy from 'speakeasy';
+import * as QRCode from 'qrcode';
 
 @Injectable()
 export class AuthService {
@@ -183,5 +187,52 @@ export class AuthService {
       passwordResetExpiration: addMinutes(new Date(), 10),
     });
     return session_id;
+  }
+
+  async get2faQrCode(user: LoggedInUserInterface) {
+    const secret = speakeasy.generateSecret({
+      name: 'Cashcloud',
+      issuer: 'Cashcloud',
+      length: 20,
+    });
+    await this.redisService.saveUser2FASecret(user.session_id, secret);
+    return await QRCode.toDataURL(secret.otpauth_url);
+  }
+
+  async enable2fa(user: LoggedInUserInterface, { code }: any) {
+    const secret = await this.redisService.getUser2FASecret(user.session_id);
+    if (!secret) throw new BadRequestException('Please Generate new QrCode');
+    const verified: boolean = await this.validate2fa(
+      { twoFA: secret.base32 },
+      code,
+    );
+    if (verified) {
+      await this.usersService.updateUserBy(
+        { id: user.id },
+        { twoFA: secret.base32 },
+      );
+      await this.redisService.deleteUser2FASecret(user.session_id);
+      return sendSuccess('2FA Enabled');
+    } else {
+      throw new BadRequestException('Invalid Code');
+    }
+  }
+
+  async disable2Fa(user: LoggedInUserInterface, { code }: any) {
+    const verified: boolean = await this.validate2fa(user, code);
+    if (verified) {
+      await this.usersService.updateUserBy({ id: user.id }, { twoFA: null });
+      return sendSuccess('2FA Disabled');
+    } else {
+      throw new BadRequestException('Invalid Code');
+    }
+  }
+
+  async validate2fa({ twoFA }: any, code: number) {
+    return speakeasy.totp.verify({
+      secret: twoFA,
+      encoding: 'base32',
+      token: code.toString(),
+    });
   }
 }

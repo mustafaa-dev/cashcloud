@@ -1,1 +1,1 @@
-// export * from './licenses.module';
+export * from './licenses.module';
