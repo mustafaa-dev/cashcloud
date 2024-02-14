@@ -2,7 +2,7 @@ import { Controller, Get, Param, Patch, UseGuards } from '@nestjs/common';
 import { JwtGuard } from '@app/auth/guards/jwt.guard';
 import { LicensesService } from './licenses.service';
 import { Paginate, Paginated, PaginateQuery } from 'nestjs-paginate';
-import { License } from './entities/license.entity';
+import { License } from '@app/license/entities';
 import {
   CurrentUser,
   LoggedInUserInterface,
