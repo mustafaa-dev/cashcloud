@@ -1,27 +1,58 @@
-import { Injectable } from '@nestjs/common';
-import { UsersService } from '@app/users/users.service';
-import { RolesService } from '@app/roles/roles.service';
-import { User } from '@app/users/entities';
+import { DataSource, EntityManager } from 'typeorm';
 import { Role } from '@app/roles/entities';
+import { AdminDetails, User } from '@app/users/entities';
 
-@Injectable()
-export class UsersSeed {
-  constructor(
-    private readonly usersService: UsersService,
-    private readonly rolesService: RolesService,
-  ) {}
+export async function seedAdmins(dataSource: DataSource) {
+  console.log('Seeding Super Admins');
+  console.log('------------------');
+  await dataSource.manager.transaction(
+    async (transactionalEntityManager: EntityManager) => {
+      const role: Role = await transactionalEntityManager.findOne(Role, {
+        where: { name: 'admin' },
+      });
+      const { superAdmin, superAdminDetails } = await seedSuperAdmin(role);
+      await transactionalEntityManager.save(superAdminDetails);
+      await transactionalEntityManager.save(superAdmin);
+      console.log(`Super Admins seeded - ${superAdmin.username} : desha`);
+      // return await this.usersService.addAdmin(user, null);
 
-  async seedUsers() {
-    const role: Role = await this.rolesService.getRoleBy({ name: 'admin' });
-    const user: User = new User();
-    user.name = 'Admin User';
-    user.username = 'admin';
-    user.email = 'admin@example.com';
-    user.password = 'password';
-    user.phone = '1234567890';
-    user.active = true;
-    user.isVerified = true;
-    user.role = role;
-    // return await this.usersService.addAdmin(user, null);
-  }
+      const { user, adminDetails } = await seedAdmin(role);
+      await transactionalEntityManager.save(adminDetails);
+      await transactionalEntityManager.save(user);
+      console.log(`Admin seeded - ${user.username} : desha`);
+    },
+  );
+}
+
+async function seedSuperAdmin(role: Role) {
+  const superAdminDetails: AdminDetails = new AdminDetails();
+  const user = new User();
+  superAdminDetails.is_super_admin = true;
+  user.name = 'Mustafa Muhammed';
+  user.username = 'super_desha';
+  user.email = 'mostafa.mohammed1235@gmail.com';
+  user.password = 'desha';
+  user.phone = '+201112658502';
+  user.active = true;
+  user.isVerified = true;
+  user.role = role;
+  user.admin_details = superAdminDetails;
+  return { superAdmin: user, superAdminDetails };
+}
+
+async function seedAdmin(role: Role) {
+  const adminDetails: AdminDetails = new AdminDetails();
+  const user = new User();
+  adminDetails.is_super_admin = false;
+  user.name = 'Mustafa Muhammed';
+  user.username = 'desha';
+  user.email = 'mostafa.mohammed1235@icloud.com';
+  user.password = 'desha';
+  user.phone = '+21554444247';
+  user.active = true;
+  user.isVerified = true;
+  user.role = role;
+  user.admin_details = adminDetails;
+  user.twoFA = 'OI3EYYSOLJ2XS62QJJATGWZFGVGUU3RR';
+  return { user, adminDetails };
 }

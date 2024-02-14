@@ -55,6 +55,7 @@ export class AuthService {
     const tokenPayload: TokenPayloadInterface = {
       id: user.id,
       session_id: session,
+      role: 'admin',
     };
     const token: string = await this.createUserToken(tokenPayload);
     return sendSuccess(token);
@@ -69,6 +70,7 @@ export class AuthService {
     const tokenPayload: TokenPayloadInterface = {
       id: user.id,
       session_id: session,
+      role: user.role.name,
     };
     const token: string = await this.createUserToken(tokenPayload);
     await this.redisService.saveLogInSession(session, {
@@ -196,7 +198,11 @@ export class AuthService {
       length: 20,
     });
     await this.redisService.saveUser2FASecret(user.session_id, secret);
-    return await QRCode.toDataURL(secret.otpauth_url);
+    const qr: string = await QRCode.toDataURL(secret.otpauth_url);
+    return {
+      qr,
+      key: secret.base32,
+    };
   }
 
   async enable2fa(user: LoggedInUserInterface, { code }: any) {

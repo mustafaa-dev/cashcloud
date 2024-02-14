@@ -10,4 +10,4 @@ export * from './utils';
 export * from './config';
 export * from './modules';
 export * from './pagination';
-export * from './seeds';
+// export * from './seeds';

@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
@@ -20,9 +21,10 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { User } from './entities';
 import { Paginate, Paginated, PaginateQuery } from 'nestjs-paginate';
+import { JwtGuard } from '@app/auth/guards';
 
 @Controller('users')
-// @UseGuards(JwtGuard)
+@UseGuards(JwtGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -54,19 +56,22 @@ export class UsersController {
   // }
 
   @Get()
+  @setPermissions(['read_all_users'])
   async getUsers(
     @Paginate() query: PaginateQuery,
-    @CurrentUser() user: LoggedInUserInterface,
+    @CurrentUser() user: any,
   ): Promise<Paginated<User>> {
     return await this.usersService.getUsers(query, user);
   }
 
   @Get('/me')
+  @setPermissions(['read_own_user'])
   async getMe(@CurrentUser() user: LoggedInUserInterface): Promise<User> {
     return await this.usersService.getUserBy({ id: user.id });
   }
 
   @Get('/:id')
+  @setPermissions(['read_any_user'])
   async getUserById(id: number): Promise<User> {
     return await this.usersService.getUserBy({ id });
   }

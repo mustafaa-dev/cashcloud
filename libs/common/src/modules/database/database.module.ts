@@ -28,6 +28,7 @@ import { config } from '@app/common/modules/database/config';
     TypeOrmModule.forRootAsync({
       useFactory: () => ({
         ...config,
+        entities: ['dist/**/*.entity.js'],
         // autoLoadEntities: true,
         synchronize: true,
       }),

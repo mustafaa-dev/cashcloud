@@ -1,14 +1,24 @@
-// seed.ts
-import { NestFactory } from '@nestjs/core';
-import { SeedsService } from '@app/common';
-import { AppModule } from '@app/app.module';
+import dataSource from '@app/common/modules/database/config/data-source';
+import { seedRoles } from '@app/common/seeds/roles.seed';
+import { seedAdmins } from '@app/common/seeds/users.seed';
 
 async function seed() {
-  const app = await NestFactory.createApplicationContext(AppModule);
-  await app.get(SeedsService);
+  console.log('Seeding database');
+  console.log('------------------');
+  const ds = await dataSource.initialize();
+  await seedRoles(ds);
+  console.log('------------------');
+  await seedAdmins(ds);
+  console.log('------------------');
 }
 
-seed().catch((error) => {
-  console.error('Error seeding database', error);
-  process.exit(1);
-});
+seed()
+  .then(() => {
+    console.log('Database seeded');
+    process.exit(0);
+  })
+  .catch((error) => {
+    console.error('Error seeding database', error);
+    console.error('Error details', error.stack);
+    process.exit(1);
+  });

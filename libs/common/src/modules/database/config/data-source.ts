@@ -14,8 +14,10 @@ export const config: any = {
   password: DB_PASSWORD,
   port: +DB_PORT,
   database: DB_NAME,
-  entities: ['dist/**/*.entity{.ts,.js}'],
+  entities: ['src/**/*.entity{.ts,.js}'],
   migrations: ['dist/migrations/**/*{.ts,.js}'],
+  synchronize: true,
+
   // autoLoadEntities: true,
   // cli: {
   //   migrationsDir: 'migrations',

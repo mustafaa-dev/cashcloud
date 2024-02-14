@@ -21,7 +21,6 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     password: string,
   ): Promise<User> {
     const user = await this.authService.validateUser(username, password);
-
     if (user.twoFA !== null) {
       if (!req.body.code) {
         throw new BadRequestException('2FA code is required');

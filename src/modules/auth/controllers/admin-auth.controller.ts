@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from '../auth.service';
 import {
+  AdminLoginDto,
   ApiResponse,
   CurrentUser,
   LoggedInUserInterface,
@@ -25,28 +26,42 @@ import {
 } from '@app/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { User } from '@app/users/entities';
-import { LocalAuthGuard } from '@app/auth/guards/local.guard';
 import { JwtGuard } from '@app/auth/guards/jwt.guard';
+import {
+  ApiAcceptedResponse,
+  ApiBearerAuth,
+  ApiBody,
+  ApiNotFoundResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
+import { LocalAdminAuthGuard } from '@app/auth/guards/local-admin.guard';
+import { TwoFAGuard } from '@app/auth/guards/2fa.guard';
 
 @Controller('admin/auth')
+@ApiTags('Admin Auth')
 // @UseInterceptors(CacheInterceptor) // Add This here
 @UseGuards(JwtGuard)
 export class AdminAuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @ApiBody({ type: AdminLoginDto })
+  @ApiAcceptedResponse({ status: 201 })
+  @ApiOperation({ summary: 'Admin Login' })
+  @ApiNotFoundResponse()
   @Post('login')
   @Public()
-  @UseGuards(LocalAuthGuard)
+  @UseGuards(LocalAdminAuthGuard)
   async login(
     @Req() req: Request,
     @Ip() ip: string,
     @CurrentUser() user: User,
-    @Body() body: any,
   ): Promise<ApiResponse<any>> {
     return await this.authService.login(user, req, ip);
   }
 
   @Get('logout')
+  @ApiBearerAuth()
   async logout(@CurrentUser() { session_id }: any): Promise<any> {
     return await this.authService.logout(session_id);
   }
@@ -107,6 +122,7 @@ export class AdminAuthController {
   }
 
   @Patch('2fa-disable')
+  @UseGuards(TwoFAGuard)
   async disable2Fa(
     @CurrentUser() user: LoggedInUserInterface,
     @Body() body: any,
