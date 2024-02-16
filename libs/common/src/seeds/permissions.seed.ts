@@ -20,6 +20,7 @@ export const admin_permissions = [
   'read_any_permission',
   'edit_permission',
   'add_any_store',
+  'view_all_stores',
   'add_store_type',
   'add_client_user',
   'read_all_users',

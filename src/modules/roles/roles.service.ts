@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { RoleRepository } from './repositories/role.repository';
+import { RoleRepository } from '@app/roles/repositories';
 import {
   AddRoleDto,
   ApiResponse,
@@ -8,9 +8,9 @@ import {
   RoleQueryDto,
   sendSuccess,
 } from '@app/common';
-import { Role } from './entities/role.entity';
+import { Role } from '@app/roles/entities';
 import { PermissionService } from './permission/permission.service';
-import { Permission } from './permission/entities/permission.entity';
+import { Permission } from '@app/roles/permission/entities';
 
 @Injectable()
 export class RolesService {

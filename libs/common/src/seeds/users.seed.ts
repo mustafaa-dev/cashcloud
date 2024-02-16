@@ -5,11 +5,17 @@ import { AdminDetails, User } from '@app/users/entities';
 export async function seedAdmins(dataSource: DataSource) {
   console.log('Seeding Super Admins');
   console.log('------------------');
+  const users = await dataSource.manager.find(User);
+  if (users.length > 0) {
+    console.log('Admins already seeded');
+    return;
+  }
   await dataSource.manager.transaction(
     async (transactionalEntityManager: EntityManager) => {
       const role: Role = await transactionalEntityManager.findOne(Role, {
         where: { name: 'admin' },
       });
+
       const { superAdmin, superAdminDetails } = await seedSuperAdmin(role);
       await transactionalEntityManager.save(superAdminDetails);
       await transactionalEntityManager.save(superAdmin);

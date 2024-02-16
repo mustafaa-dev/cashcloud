@@ -1,6 +1,7 @@
 import dataSource from '@app/common/modules/database/config/data-source';
 import { seedRoles } from '@app/common/seeds/roles.seed';
 import { seedAdmins } from '@app/common/seeds/users.seed';
+import { seedStoreTypes } from '@app/common/seeds/store-types.seed';
 
 async function seed() {
   console.log('Seeding database');
@@ -9,6 +10,8 @@ async function seed() {
   await seedRoles(ds);
   console.log('------------------');
   await seedAdmins(ds);
+  console.log('------------------');
+  await seedStoreTypes(ds);
   console.log('------------------');
 }
 

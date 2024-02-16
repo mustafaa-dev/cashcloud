@@ -1,6 +1,7 @@
 version: '3'
 services:
   mysql:
+    restart: always
     image: mysql:latest
     ports:
       - '3306:3306'
@@ -11,15 +12,28 @@ services:
       MYSQL_PASSWORD: desha
     networks:
       - backend
+    volumes:
+      - 'cashcloud-mysql:/var/lib/mysql'
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-p toor" ]
+      retries: 3
+      timeout: 5s
 
   redis:
-    image: redis:latest
+    image: redis:alpine
     ports:
       - '6379:6379'
     networks:
       - backend
+    volumes:
+      - 'cashcloud-redis:/data'
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      retries: 3
+      timeout: 5s
 
   phpmyadmin:
+    platform: linux/x86_64
     image: phpmyadmin/phpmyadmin
     restart: always
     environment:
@@ -46,7 +60,16 @@ services:
     command: npm run start:dev
     networks:
       - backend
+    restart: always
 
 networks:
   backend:
     driver: bridge
+
+volumes:
+  cashcloud_api:
+    driver: local
+  cashcloud-redis:
+    driver: local
+  cashcloud-mysql:
+    driver: local

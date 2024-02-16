@@ -6,6 +6,8 @@ import { AddStoreAdminDto } from '@app/common';
 import { LicensesService } from '@app/license/licenses.service';
 import { StoreType } from '@app/stores/modules/store-types/entites/store-types.entity';
 import { License } from '@app/license/entities';
+import { paginate, PaginateQuery } from 'nestjs-paginate';
+import { GET_ALL_STORES_PAGINATION } from '@app/common/pagination/stores.pagination';
 
 @Injectable()
 export class StoresService {
@@ -31,5 +33,13 @@ export class StoresService {
     newStore.store_type = storeType;
     newStore.owned_by = license;
     return await this.storeRepository.createOne(newStore);
+  }
+
+  async getAllStores(query: PaginateQuery) {
+    return paginate(
+      query,
+      this.storeRepository.createQueryBuilder('stores'),
+      GET_ALL_STORES_PAGINATION,
+    );
   }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { StoresService } from '@app/stores/stores.service';
 import {
   AddStoreAdminDto,
@@ -8,6 +8,7 @@ import {
   setPermissions,
 } from '@app/common';
 import { JwtGuard, PermissionGuard } from '@app/auth/guards';
+import { Paginate, PaginateQuery } from 'nestjs-paginate';
 
 @Controller('stores')
 export class StoresController {
@@ -31,5 +32,12 @@ export class StoresController {
       ...addStoreDto,
       licenseCode: user.client_details.license.code,
     });
+  }
+
+  @Get()
+  @UseGuards(JwtGuard, PermissionGuard)
+  @setPermissions(['view_all_stores'])
+  async getAllStores(@Paginate() query: PaginateQuery) {
+    return await this.storeService.getAllStores(query);
   }
 }
