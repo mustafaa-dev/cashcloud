@@ -1,7 +1,6 @@
 import { PaginateConfig } from 'nestjs-paginate';
-import { Store } from '@app/stores/entities';
 
-export const GET_ALL_STORES_PAGINATION: PaginateConfig<Store> = {
+export const GET_ALL_STORES_PAGINATION: PaginateConfig<any> = {
   relations: {
     store_type: true,
     owned_by: true,
