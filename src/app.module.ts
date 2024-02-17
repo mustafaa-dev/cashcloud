@@ -9,6 +9,7 @@ import { UsersModule } from '@app/users';
 import { MediaModule } from '@app/media';
 import { AddressesModule } from './modules/addresses';
 import { LicensesModule } from '@app/license';
+import { ProductsModule } from '@app/modules/products/products.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { LicensesModule } from '@app/license';
     PaymentsModule,
     StoresModule,
     AddressesModule,
+    ProductsModule,
     // CronModule,
   ],
 })

@@ -5,14 +5,19 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
+import { LoggerService } from '@app/common/modules/logger/logger.service';
 
 @Catch()
 export class ApiGatewayErrorFilter implements ExceptionFilter {
-  sendErrorDevelopment = (err: any, response: any) => {
+  constructor(private readonly loggerService: LoggerService) {}
+
+  sendErrorDevelopment = (err: any, request: any, response: any) => {
     const status = +err.status || HttpStatus.INTERNAL_SERVER_ERROR;
     response.status(status).json({
-      statusCode: HttpStatus.NOT_ACCEPTABLE,
+      statusCode: status,
       err,
+      errMsg: err.message,
+      errStack: err.stack,
     });
   };
 
@@ -52,15 +57,17 @@ export class ApiGatewayErrorFilter implements ExceptionFilter {
       message: 'Internal Server Error',
     };
 
-    if (exception?.driverError?.code === 'ER_DUP_ENTRY')
+    if (exception?.driverError?.code === 'ER_DUP_ENTRY') {
       error = this.handleDuplicateError(exception);
-
-    if (exception instanceof HttpException)
+    } else if (exception instanceof HttpException) {
       error = this.handleHttpError(exception);
-
-    if (exception instanceof TypeError) error = this.handleTypeError(exception);
+    } else if (exception instanceof TypeError) {
+      error = this.handleTypeError(exception);
+    } else {
+      this.loggerService.getLogger({ exception, request });
+    }
     if (process.env.NODE_ENV === 'development') {
-      return this.sendErrorDevelopment(exception, response);
+      return this.sendErrorDevelopment(exception, request, response);
     } else return this.sendErrorProduction(error, request, response);
   }
 }

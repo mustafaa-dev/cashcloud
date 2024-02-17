@@ -22,6 +22,7 @@ export const admin_permissions = [
   'add_any_store',
   'view_all_stores',
   'delete_any_store',
+  'update_any_store',
   'add_store_type',
   'add_client_user',
   'read_all_users',
@@ -29,12 +30,15 @@ export const admin_permissions = [
   'read_any_user',
   'delete_client_user',
   'delete_employee_user',
+  'add_any_product',
+  'delete_any_product',
 ];
 export const client_permissions = [
   'read_own_license',
   'change_own_license_status',
   'read_extend_license',
   'add_own_store',
+  'update_own_store',
   'read_own_user',
 ];
 export const employee_permissions = [];

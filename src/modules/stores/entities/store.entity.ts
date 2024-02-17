@@ -1,15 +1,24 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
-import { AbstractEntity } from './../../../../libs/common/src/modules/database/entities/abstract.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+} from 'typeorm';
+import { AbstractEntity } from '@app/common';
 import { StoreType } from '../modules/store-types/entites/store-types.entity';
 import { Address } from '../../addresses/entities/address.entity';
 import { License } from '@app/license/entities/license.entity';
+import { Picture } from '@app/media/entities';
+import { Product } from '@app/modules/products/entities/product.entity';
 
 @Entity('stores')
 export class Store extends AbstractEntity<Store> {
   @Column()
   name: string;
 
-  @OneToOne(() => Address)
+  @OneToOne(() => Address, { eager: true })
   @JoinColumn()
   address: Address;
 
@@ -22,11 +31,9 @@ export class Store extends AbstractEntity<Store> {
   @Column({ default: false })
   active: boolean;
 
-  @Column({
-    default:
-      'https://res.cloudinary.com/dp2f96bxe/image/upload/v1689102715/Logo_horiz_72ppi_k1jppp.png',
-  })
-  logo: string;
+  @OneToOne(() => Picture, { eager: true })
+  @JoinColumn()
+  logo: Picture;
 
   // @ManyToMany(() => License)
   // @JoinTable()
@@ -36,4 +43,6 @@ export class Store extends AbstractEntity<Store> {
   owned_by: License;
   @ManyToOne(() => StoreType, (storeType) => storeType.stores, { eager: true })
   store_type: StoreType;
+  @OneToMany(() => Product, (product) => product.store)
+  products: Product[];
 }

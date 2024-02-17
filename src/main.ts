@@ -3,8 +3,9 @@ import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { Logger } from 'nestjs-pino';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { ApiGatewayErrorFilter } from '@app/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ApiGatewayErrorFilter } from '@app/common';
+import { LoggerService } from '@app/common/modules/logger/logger.service';
 
 async function bootstrap() {
   const app: INestApplication<AppModule> = await NestFactory.create(AppModule);
@@ -21,10 +22,11 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const PORT = configService.getOrThrow('PORT');
   app.enableCors();
+  const loggerService = app.get(LoggerService);
   app.useLogger(app.get(Logger));
   app.setGlobalPrefix('api/v4');
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
-  app.useGlobalFilters(new ApiGatewayErrorFilter());
+  app.useGlobalFilters(new ApiGatewayErrorFilter(loggerService));
   await app.listen(PORT);
 }
 

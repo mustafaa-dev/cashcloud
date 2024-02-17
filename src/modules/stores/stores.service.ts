@@ -10,6 +10,9 @@ import { paginate, PaginateQuery } from 'nestjs-paginate';
 import { GET_ALL_STORES_PAGINATION } from '@app/common/pagination/stores.pagination';
 import { EntityManager } from 'typeorm';
 import { Address } from '@app/modules/addresses/entities/address.entity';
+import { MediaService } from '@app/media/media.service';
+import { AddressesService } from '@app/modules/addresses/addresses.service';
+import { UpdateStoreClientDto } from '@app/common/dtos/request/stores/update-store-client.dto';
 
 @Injectable()
 export class StoresService {
@@ -18,6 +21,8 @@ export class StoresService {
     private readonly storeTypeService: StoreTypesService,
     private readonly licenseService: LicensesService,
     private readonly entityManager: EntityManager,
+    private readonly mediaService: MediaService,
+    private readonly addressService: AddressesService,
   ) {}
 
   async addStore(addStoreAdminDto: AddStoreAdminDto) {
@@ -53,5 +58,35 @@ export class StoresService {
 
   async deleteStore(id: number) {
     return await this.storeRepository.findOneAndDelete({ id });
+  }
+
+  async updateStore(
+    id: number,
+    image: Express.Multer.File,
+    updateStoreAdminDto: UpdateStoreClientDto,
+  ): Promise<Store> {
+    const store: Store = await this.storeRepository.findOne({
+      where: { id },
+      relations: ['owned_by'],
+    });
+    const address = await this.addressService.getAddressById(store.address.id);
+    return await this.entityManager.transaction(async (tr) => {
+      Object.assign(store, updateStoreAdminDto);
+      if (image) {
+        const logo = await this.mediaService.uploadPicture(image);
+        await tr.save(logo);
+        store.logo = logo;
+      }
+      Object.assign(address, updateStoreAdminDto.address);
+      await tr.save(address);
+      return await tr.save(store);
+    });
+  }
+
+  async getStoreById(id: number): Promise<Store> {
+    return await this.storeRepository.findOne({
+      where: { id },
+      relations: ['store_type', 'address', 'owned_by'],
+    });
   }
 }

@@ -19,4 +19,8 @@ export class AddressesService {
     Object.assign(newAddress, addAddressDto);
     return await this.addressRepository.createOne(newAddress);
   }
+
+  async getAddressById(id: number) {
+    return await this.addressRepository.findOne({ where: { id } });
+  }
 }

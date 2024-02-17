@@ -4,8 +4,11 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { StoresService } from '@app/stores/stores.service';
 import {
@@ -14,9 +17,12 @@ import {
   CurrentUser,
   LoggedInUserInterface,
   setPermissions,
+  UpdateStoreAdminDto,
 } from '@app/common';
 import { JwtGuard, PermissionGuard } from '@app/auth/guards';
 import { Paginate, PaginateQuery } from 'nestjs-paginate';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { UpdateStoreClientDto } from '@app/common/dtos/request/stores/update-store-client.dto';
 
 @Controller('stores')
 export class StoresController {
@@ -57,5 +63,31 @@ export class StoresController {
     @Param('id') id: number,
   ) {
     return await this.storeService.deleteStore(+id);
+  }
+
+  @Patch('update-store-admin/:id')
+  @UseGuards(JwtGuard, PermissionGuard)
+  @UseInterceptors(FileInterceptor('logo'))
+  @setPermissions(['update_any_store'])
+  async updateAnyStore(
+    @CurrentUser() user: LoggedInUserInterface,
+    @UploadedFile() image: Express.Multer.File,
+    @Param('id') id: number,
+    @Body() updateStoreDto: UpdateStoreAdminDto,
+  ) {
+    return await this.storeService.updateStore(+id, image, updateStoreDto);
+  }
+
+  @Patch('update-store-client/:id')
+  @UseGuards(JwtGuard, PermissionGuard)
+  @UseInterceptors(FileInterceptor('logo'))
+  @setPermissions(['update_own_store'])
+  async updateOwnStore(
+    @CurrentUser() user: LoggedInUserInterface,
+    @UploadedFile() image: Express.Multer.File,
+    @Param('id') id: number,
+    @Body() updateStoreDto: UpdateStoreClientDto,
+  ) {
+    return await this.storeService.updateStore(+id, image, updateStoreDto);
   }
 }
