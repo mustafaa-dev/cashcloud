@@ -21,6 +21,7 @@ export const admin_permissions = [
   'edit_permission',
   'add_any_store',
   'view_all_stores',
+  'delete_any_store',
   'add_store_type',
   'add_client_user',
   'read_all_users',

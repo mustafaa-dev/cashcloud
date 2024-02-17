@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { StoresService } from '@app/stores/stores.service';
 import {
   AddStoreAdminDto,
@@ -39,5 +47,15 @@ export class StoresController {
   @setPermissions(['view_all_stores'])
   async getAllStores(@Paginate() query: PaginateQuery) {
     return await this.storeService.getAllStores(query);
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtGuard, PermissionGuard)
+  @setPermissions(['delete_any_store'])
+  async deleteStore(
+    @CurrentUser() user: LoggedInUserInterface,
+    @Param('id') id: number,
+  ) {
+    return await this.storeService.deleteStore(+id);
   }
 }

@@ -42,4 +42,8 @@ export class StoresService {
       GET_ALL_STORES_PAGINATION,
     );
   }
+
+  async deleteStore(id: number) {
+    return await this.storeRepository.findOneAndDelete({ id });
+  }
 }
