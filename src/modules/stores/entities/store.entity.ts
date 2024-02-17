@@ -1,4 +1,4 @@
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
 import { AbstractEntity } from './../../../../libs/common/src/modules/database/entities/abstract.entity';
 import { StoreType } from '../modules/store-types/entites/store-types.entity';
 import { Address } from '../../addresses/entities/address.entity';
@@ -9,9 +9,9 @@ export class Store extends AbstractEntity<Store> {
   @Column()
   name: string;
 
-  @ManyToMany(() => Address)
-  @JoinTable()
-  address: Address[];
+  @OneToOne(() => Address)
+  @JoinColumn()
+  address: Address;
 
   @Column()
   phone: string;

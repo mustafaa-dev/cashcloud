@@ -57,11 +57,11 @@ services:
       - mysql
     volumes:
       - .:/usr/src/app
-      - /usr/src/app/node_modules
+    #      - /usr/src/app/node_modules
     command: npm run start:dev
     networks:
       - backend
-    restart: always
+#    restart: always
 
 networks:
   backend:

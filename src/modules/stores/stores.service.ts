@@ -8,6 +8,8 @@ import { StoreType } from '@app/stores/modules/store-types/entites/store-types.e
 import { License } from '@app/license/entities';
 import { paginate, PaginateQuery } from 'nestjs-paginate';
 import { GET_ALL_STORES_PAGINATION } from '@app/common/pagination/stores.pagination';
+import { EntityManager } from 'typeorm';
+import { Address } from '@app/modules/addresses/entities/address.entity';
 
 @Injectable()
 export class StoresService {
@@ -15,10 +17,12 @@ export class StoresService {
     private readonly storeRepository: StoreRepository,
     private readonly storeTypeService: StoreTypesService,
     private readonly licenseService: LicensesService,
+    private readonly entityManager: EntityManager,
   ) {}
 
   async addStore(addStoreAdminDto: AddStoreAdminDto) {
     const newStore: Store = new Store();
+    const newAddress = new Address();
     const storeType: StoreType = await this.storeTypeService.getStoreTypeBy({
       id: addStoreAdminDto.storeTypeId,
     });
@@ -30,9 +34,13 @@ export class StoresService {
     delete addStoreAdminDto.storeTypeId;
     delete addStoreAdminDto.licenseCode;
     Object.assign(newStore, addStoreAdminDto);
-    newStore.store_type = storeType;
-    newStore.owned_by = license;
-    return await this.storeRepository.createOne(newStore);
+    Object.assign(newAddress, addStoreAdminDto.address);
+    return await this.entityManager.transaction(async (tr) => {
+      newStore.store_type = storeType;
+      newStore.owned_by = license;
+      newStore.address = await tr.save(Address, addStoreAdminDto.address);
+      return await tr.save(newStore);
+    });
   }
 
   async getAllStores(query: PaginateQuery) {

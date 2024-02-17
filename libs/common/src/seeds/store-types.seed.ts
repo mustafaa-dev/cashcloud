@@ -23,7 +23,6 @@ export async function seedStoreTypes(dataSource: DataSource) {
         const newType: StoreType = new StoreType();
         newType.name = type[0];
         newType.cost = +type[1];
-        console.log(newType);
         await transactionalEntityManager.save(newType);
       }
       console.log('store types seeded');
