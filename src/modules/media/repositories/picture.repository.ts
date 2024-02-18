@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { AbstractRepository } from '@app/common';
-import { Picture } from '../entities/picture.entity';
+import { AbstractRepository } from '@app/common/modules/database/repositories/abstract.repository';
+import { Picture } from '@app/media/entities';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 

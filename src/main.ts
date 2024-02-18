@@ -4,8 +4,8 @@ import { ConfigService } from '@nestjs/config';
 import { Logger } from 'nestjs-pino';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { ApiGatewayErrorFilter } from '@app/common';
 import { LoggerService } from '@app/common/modules/logger/logger.service';
+import { ApiGatewayErrorFilter } from '@app/common';
 
 async function bootstrap() {
   const app: INestApplication<AppModule> = await NestFactory.create(AppModule);

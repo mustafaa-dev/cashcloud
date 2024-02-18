@@ -1,5 +1,10 @@
 import { Module } from '@nestjs/common';
-import { DatabaseModule, LoggerModule, RedisModule } from '@app/common';
+import {
+  CronModule,
+  DatabaseModule,
+  LoggerModule,
+  RedisModule,
+} from '@app/common';
 import { ConfigModule } from '@nestjs/config';
 import { MailingModule } from '@app/mailing';
 import { PaymentsModule } from '@app/payments';
@@ -26,7 +31,7 @@ import { ProductsModule } from '@app/modules/products/products.module';
     StoresModule,
     AddressesModule,
     ProductsModule,
-    // CronModule,
+    CronModule,
   ],
 })
 export class AppModule {}

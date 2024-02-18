@@ -1,5 +1,5 @@
 import { Column, Entity, OneToMany } from 'typeorm';
-import { AbstractEntity } from '@app/common';
+import { AbstractEntity } from '@app/common/modules/database/entities/abstract.entity';
 import { Payment } from '@app/payments/entities';
 
 @Entity('admin_details')

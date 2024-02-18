@@ -32,6 +32,7 @@ export const admin_permissions = [
   'delete_employee_user',
   'add_any_product',
   'delete_any_product',
+  'update_any_product',
 ];
 export const client_permissions = [
   'read_own_license',

@@ -103,6 +103,7 @@ export class UsersService {
         newUser.client_details = newClientDetails;
         await transaction.save(license);
         await transaction.save(newClientDetails);
+        console.log(newUser, 'newUser');
         return await transaction.save(newUser);
       },
     );

@@ -20,6 +20,8 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     username: string,
     password: string,
   ): Promise<User> {
+    console.log(username, password);
+
     const user = await this.authService.validateUser(username, password);
     if (user.twoFA !== null) {
       if (!req.body.code) {

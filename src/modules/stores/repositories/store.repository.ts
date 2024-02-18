@@ -1,5 +1,5 @@
-import { AbstractRepository } from '@app/common';
-import { Store } from '../entities/store.entity';
+import { AbstractRepository } from '@app/common/modules/database/repositories/abstract.repository';
+import { Store } from '@app/stores/entities';
 import { EntityManager, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 

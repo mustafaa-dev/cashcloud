@@ -1,5 +1,5 @@
 import { Column, Entity } from 'typeorm';
-import { AbstractEntity } from '@app/common';
+import { AbstractEntity } from '../../../../libs/common/src/modules/database/entities/abstract.entity';
 
 @Entity('pictures')
 export class Picture extends AbstractEntity<Picture> {

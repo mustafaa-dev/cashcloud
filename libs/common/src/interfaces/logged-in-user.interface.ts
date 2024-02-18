@@ -1,5 +1,5 @@
-import { User } from '../../../../src/modules/users/entities/user.entity';
+import { User } from '@app/users/entities';
 
 export interface LoggedInUserInterface extends User {
-  session_id?: string;
+  session_id: string;
 }

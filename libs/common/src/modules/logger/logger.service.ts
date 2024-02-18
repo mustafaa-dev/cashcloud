@@ -1,6 +1,6 @@
-import { Injectable } from "@nestjs/common";
-import pino from "pino";
-import { createWriteStream } from "fs";
+import { Injectable } from '@nestjs/common';
+import pino from 'pino';
+import { createWriteStream } from 'fs';
 
 @Injectable()
 export class LoggerService {
@@ -11,18 +11,18 @@ export class LoggerService {
   // }
 
   getLogger(err: any): pino.Logger {
-    const logFileStream = createWriteStream("logs/error.log", { flags: "a" });
+    const logFileStream = createWriteStream('logs/error.log', { flags: 'a' });
     const logger = pino(
       {
-        level: "error",
+        level: 'error',
         timestamp: () => `,"timestamp":"${new Date().toISOString()}"`, // Custom timestamp format
         serializers: {
           error: errorSerializer,
           req: pino.stdSerializers.req,
-          res: pino.stdSerializers.res
-        }
+          res: pino.stdSerializers.res,
+        },
       },
-      logFileStream
+      logFileStream,
     );
     logger.error(err);
     return logger;
@@ -34,6 +34,6 @@ function errorSerializer(error: any) {
     message: error.message,
     status: error.status,
     code: error.code,
-    stackTrace: error.stack // Optionally include stack trace
+    stackTrace: error.stack,
   };
 }

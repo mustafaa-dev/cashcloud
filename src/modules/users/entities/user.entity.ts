@@ -1,4 +1,4 @@
-import { AbstractEntity } from './../../../../libs/common/src/modules/database/entities/abstract.entity';
+import { AbstractEntity } from '@app/common/modules/database/entities/abstract.entity';
 import {
   BeforeInsert,
   Column,

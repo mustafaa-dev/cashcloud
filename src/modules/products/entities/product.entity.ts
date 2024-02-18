@@ -1,4 +1,4 @@
-import { AbstractEntity } from '@app/common';
+import { AbstractEntity } from '@app/common/modules/database/entities/abstract.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
 import { Picture } from '@app/media/entities';
 import { Store } from '@app/stores/entities';

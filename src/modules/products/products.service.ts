@@ -1,11 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { ProductRepository } from '@app/modules/products/repositories/product.repository';
-import { AddProductDto } from '@app/common/dtos/products/add-product.dto';
+import {
+  AddProductDto,
+  generateNumber,
+  PRODUCTS_PAGINATION,
+  UpdateProductDto,
+} from '@app/common';
 import { Product } from '@app/modules/products/entities';
 import { StoresService } from '@app/stores/stores.service';
 import { EntityManager } from 'typeorm';
 import { MediaService } from '@app/media/media.service';
-import { generateNumber, PRODUCTS_PAGINATION } from '@app/common';
 import { paginate, PaginateQuery } from 'nestjs-paginate';
 
 @Injectable()
@@ -55,5 +59,19 @@ export class ProductsService {
 
   async deleteProduct(id: number) {
     return await this.productRepository.findOneAndDelete({ id });
+  }
+
+  async updateProduct(id: number, updateProductDto: UpdateProductDto) {
+    return await this.productRepository.findOneAndUpdate(
+      { id },
+      updateProductDto,
+    );
+  }
+
+  async getProductsOfStore(storeId: number) {
+    return await this.productRepository
+      .createQueryBuilder('products')
+      .where('products.storeId = :storeId', { storeId })
+      .getMany();
   }
 }

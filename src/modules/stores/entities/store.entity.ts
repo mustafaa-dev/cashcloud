@@ -6,7 +6,7 @@ import {
   OneToMany,
   OneToOne,
 } from 'typeorm';
-import { AbstractEntity } from '@app/common';
+import { AbstractEntity } from '@app/common/modules/database/entities/abstract.entity';
 import { StoreType } from '../modules/store-types/entites/store-types.entity';
 import { Address } from '../../addresses/entities/address.entity';
 import { License } from '@app/license/entities/license.entity';
@@ -34,10 +34,6 @@ export class Store extends AbstractEntity<Store> {
   @OneToOne(() => Picture, { eager: true })
   @JoinColumn()
   logo: Picture;
-
-  // @ManyToMany(() => License)
-  // @JoinTable()
-  // owned_by: License;
 
   @ManyToOne(() => License, (license) => license.stores)
   owned_by: License;

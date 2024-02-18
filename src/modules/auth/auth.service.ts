@@ -78,6 +78,7 @@ export class AuthService {
       ip,
       browser: req.headers['user-agent'],
     });
+
     return sendSuccess(token);
   }
 

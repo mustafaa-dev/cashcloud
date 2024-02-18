@@ -86,7 +86,7 @@ export class StoresService {
   async getStoreById(id: number): Promise<Store> {
     return await this.storeRepository.findOne({
       where: { id },
-      relations: ['store_type', 'address', 'owned_by'],
+      relations: ['store_type', 'address', 'owned_by', 'products'],
     });
   }
 }

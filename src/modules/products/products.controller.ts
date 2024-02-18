@@ -4,19 +4,24 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { ProductsService } from '@app/modules/products/products.service';
-import { AddProductDto } from '@app/common/dtos/products/add-product.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { Paginate, PaginateQuery } from 'nestjs-paginate';
 import {
+  AddProductDto,
   CurrentUser,
   LoggedInUserInterface,
+  OwnerClient,
+  OwnerClientTrigger,
   setPermissions,
 } from '@app/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Paginate, PaginateQuery } from 'nestjs-paginate';
+import { JwtGuard, PermissionGuard } from '@app/auth/guards';
 
 @Controller('products')
 export class ProductsController {
@@ -59,5 +64,34 @@ export class ProductsController {
   @setPermissions(['delete_any_product'])
   async deleteProduct(@Param('id') id: number) {
     return await this.productService.deleteProduct(id);
+  }
+
+  @Patch('own/:storeId/:productId')
+  @setPermissions(['update_own_product'])
+  @UseGuards(JwtGuard, PermissionGuard)
+  @UseInterceptors(FileInterceptor('image'))
+  async updateOwnProduct(
+    @Param('storeId') storeId: number,
+    @Param('productId') productId: number,
+    @Body() updateProductDto: AddProductDto,
+    @OwnerClient({ trigger: OwnerClientTrigger.S_P })
+    status: boolean,
+  ) {
+    if (!status) throw new Error('You are not allowed to update this product');
+    return await this.productService.updateProduct(productId, updateProductDto);
+  }
+
+  @Patch(':storeId/:productId')
+  @setPermissions(['update_any_product'])
+  @UseGuards(JwtGuard, PermissionGuard)
+  @UseInterceptors(FileInterceptor('image'))
+  async updateProduct(
+    @Param('storeId') storeId: number,
+    @Param('productId') productId: number,
+    @Body() updateProductDto: AddProductDto,
+    status: boolean,
+  ) {
+    if (!status) throw new Error('You are not allowed to update this product');
+    return await this.productService.updateProduct(productId, updateProductDto);
   }
 }

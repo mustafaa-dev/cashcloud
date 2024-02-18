@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { AbstractRepository } from '@app/common';
+import { AbstractRepository } from '@app/common/modules/database/repositories/abstract.repository';
 import { EntityManager, Repository } from 'typeorm';
 import { Address } from '../entities/address.entity';
 

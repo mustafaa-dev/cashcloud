@@ -5,6 +5,10 @@ import { EntityManager } from 'typeorm';
 export class CronService {
   constructor(private readonly entityManager: EntityManager) {}
 
-  // @Cron(CronExpression.EVERY_12_HOURS)
+  // @Cron(CronExpression.EVERY_SECOND)
+  // async x() {
+  //   console.log('This is a cron job');
+  // }
+
   // @Cron(CronExpression.EVERY_12_HOURS)
 }
