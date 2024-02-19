@@ -166,8 +166,12 @@ export class AuthService {
     return newSession;
   }
 
-  async validateUser(username: string, password: string) {
-    return await this.usersService.validateUser({ username, password });
+  async validateAdmin(where: any) {
+    return await this.usersService.validateUser(where);
+  }
+
+  async validateUser(where: any) {
+    return await this.usersService.validateUser(where);
   }
 
   async createUserToken(payload: TokenPayloadInterface): Promise<string> {

@@ -6,7 +6,7 @@ import { User } from '@app/users/entities';
 import { Request } from 'express';
 
 @Injectable()
-export class LocalStrategy extends PassportStrategy(Strategy) {
+export class LocalAdminStrategy extends PassportStrategy(Strategy, 'admin') {
   constructor(private readonly authService: AuthService) {
     super({
       usernameField: 'username',
@@ -20,9 +20,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     username: string,
     password: string,
   ): Promise<User> {
-    console.log(username, password);
-
-    const user = await this.authService.validateUser(username, password);
+    const user = await this.authService.validateAdmin({ username, password });
     if (user.twoFA !== null) {
       if (!req.body.code) {
         throw new BadRequestException('2FA code is required');

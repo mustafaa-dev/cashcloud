@@ -8,6 +8,7 @@ import { LocalStrategy } from './stratigies/auth.strategy';
 import { JwtStrategy } from './stratigies/jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { UsersModule } from '@app/users';
+import { LocalAdminStrategy } from '@app/auth/stratigies/auth-admin.strategy';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { UsersModule } from '@app/users';
     UsersModule,
     JwtModule.registerAsync(jwtConfig),
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
+  providers: [AuthService, LocalStrategy, LocalAdminStrategy, JwtStrategy],
   controllers: [AdminAuthController, UsersAuthController],
   exports: [AuthService],
 })

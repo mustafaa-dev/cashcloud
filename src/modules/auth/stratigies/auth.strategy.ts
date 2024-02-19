@@ -6,7 +6,7 @@ import { User } from '@app/users/entities';
 import { Request } from 'express';
 
 @Injectable()
-export class LocalStrategy extends PassportStrategy(Strategy) {
+export class LocalStrategy extends PassportStrategy(Strategy, 'user') {
   constructor(private readonly authService: AuthService) {
     super({
       usernameField: 'username',
@@ -20,7 +20,13 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     username: string,
     password: string,
   ): Promise<User> {
-    const user = await this.authService.validateUser(username, password);
+    const license = req.body.license;
+    if (!license) throw new BadRequestException('License is required');
+    const user = await this.authService.validateUser({
+      username,
+      password,
+      license,
+    });
 
     if (user.twoFA !== null) {
       if (!req.body.code) {

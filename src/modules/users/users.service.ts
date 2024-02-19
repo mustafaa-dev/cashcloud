@@ -13,7 +13,6 @@ import {
   ADMIN_SEARCHABLE,
   ADMIN_SELECTABLE,
   ADMIN_SORTABLE_COLUMN,
-  AdminLoginDto,
   ApiResponse,
   LoggedInUserInterface,
   sendSuccess,
@@ -26,7 +25,7 @@ import { AdminDetails, ClientDetails, User } from './entities';
 import { MediaService } from '../media/media.service';
 import { generateNumber } from '@app/common/utils';
 import { Picture } from '@app/media/entities';
-import { compare } from 'bcryptjs';
+import { compareSync } from 'bcryptjs';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { EntityManager } from 'typeorm';
 import { LicensesService } from '@app/license/licenses.service';
@@ -157,16 +156,30 @@ export class UsersService {
     return sendSuccess('User Deleted Successfully');
   }
 
-  async validateUser({ username, password }: AdminLoginDto): Promise<User> {
-    const user: User = await this.usersRepository.findOne({
-      where: { username },
-    });
-    const isCorrectPassword: boolean = await compare(password, user.password);
-    if (!isCorrectPassword) throw new ForbiddenException('Bad Credentials');
+  async validateUser(where: any): Promise<User> {
+    const { username, password, license } = where;
+    const user = await this.checkUserPassword(username, password);
+    if (
+      license &&
+      user.client_details &&
+      user.client_details.license.code !== license
+    ) {
+      throw new BadRequestException('Invalid License');
+    }
+
     if (!user.active)
       throw new BadRequestException(
         'User Disabled, Please contact for activation',
       );
+    return user;
+  }
+
+  async checkUserPassword(username: string, password: string): Promise<User> {
+    const user: User = await this.usersRepository.findOne({
+      where: { username },
+    });
+    const isCorrectPassword: boolean = compareSync(password, user.password);
+    if (!isCorrectPassword) throw new ForbiddenException('Bad Credentials');
     return user;
   }
 
