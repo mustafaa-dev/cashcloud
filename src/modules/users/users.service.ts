@@ -8,18 +8,10 @@ import { UserRepository } from './repositories';
 import {
   AddAdminDto,
   AddClientDto,
-  ADMIN_FILTERABLE,
-  ADMIN_RELATIONS,
-  ADMIN_SEARCHABLE,
-  ADMIN_SELECTABLE,
-  ADMIN_SORTABLE_COLUMN,
   ApiResponse,
+  GET_USERS_PAGINATE_CONFIG,
   LoggedInUserInterface,
   sendSuccess,
-  USER_RELATIONS,
-  USER_SEARCHABLE,
-  USER_SELECTABLE,
-  USER_SORTABLE_COLUMN,
 } from '@app/common';
 import { AdminDetails, ClientDetails, User } from './entities';
 import { MediaService } from '../media/media.service';
@@ -30,13 +22,7 @@ import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity
 import { EntityManager } from 'typeorm';
 import { LicensesService } from '@app/license/licenses.service';
 import { License } from '@app/license/entities/license.entity';
-import {
-  paginate,
-  Paginated,
-  PaginateQuery,
-  PaginationType,
-} from 'nestjs-paginate';
-import { Column } from 'nestjs-paginate/lib/helper';
+import { paginate, Paginated, PaginateQuery } from 'nestjs-paginate';
 import { RolesService } from '@app/roles/roles.service';
 import { Role } from '@app/roles/entities';
 
@@ -113,27 +99,13 @@ export class UsersService {
     user: LoggedInUserInterface,
   ): Promise<Paginated<User>> {
     const role: string = user.role.name;
-    const relations: Column<User>[] =
-      role === 'admin' ? ADMIN_RELATIONS : USER_RELATIONS;
-    const sortableColumn: Column<User>[] =
-      role === 'admin' ? ADMIN_SORTABLE_COLUMN : USER_SORTABLE_COLUMN;
-    const searchable: Column<User>[] =
-      role === 'admin' ? ADMIN_SEARCHABLE : USER_SEARCHABLE;
-    const select: Column<User>[] =
-      role === 'admin' ? ADMIN_SELECTABLE : USER_SELECTABLE;
-    const filter = role === 'admin' ? ADMIN_FILTERABLE : {};
+    const config = GET_USERS_PAGINATE_CONFIG(role);
 
-    return paginate(query, this.usersRepository.createQueryBuilder('users'), {
-      relations: relations,
-      loadEagerRelations: true,
-      paginationType: PaginationType.LIMIT_AND_OFFSET,
-      sortableColumns: sortableColumn,
-      // nullSort: 'first',
-      defaultSortBy: [['id', 'DESC']],
-      searchableColumns: searchable,
-      select: select,
-      filterableColumns: filter,
-    });
+    return paginate(
+      query,
+      this.usersRepository.createQueryBuilder('users'),
+      config,
+    );
   }
 
   async getUserBy(filter: any): Promise<User> {

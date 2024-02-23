@@ -1,6 +1,11 @@
 import { Column } from 'nestjs-paginate/lib/helper';
 import { User } from '@app/users/entities';
-import { FilterOperator, FilterSuffix } from 'nestjs-paginate';
+import {
+  FilterOperator,
+  FilterSuffix,
+  PaginateConfig,
+  PaginationType,
+} from 'nestjs-paginate';
 
 export const ADMIN_RELATIONS: Column<User>[] = [
   'role',
@@ -65,7 +70,27 @@ export const ADMIN_FILTERABLE = {
   phone: true,
   email: true,
   'client_details.license.code': true,
-  // admin_details: {
-  //   is_super_admin: true,
-  // },
+};
+
+export const GET_USERS_PAGINATE_CONFIG = (role: string) => {
+  const relations: Column<User>[] =
+    role === 'admin' ? ADMIN_RELATIONS : USER_RELATIONS;
+  const sortableColumn: Column<User>[] =
+    role === 'admin' ? ADMIN_SORTABLE_COLUMN : USER_SORTABLE_COLUMN;
+  const searchable: Column<User>[] =
+    role === 'admin' ? ADMIN_SEARCHABLE : USER_SEARCHABLE;
+  const select: Column<User>[] =
+    role === 'admin' ? ADMIN_SELECTABLE : USER_SELECTABLE;
+  const filter = role === 'admin' ? ADMIN_FILTERABLE : {};
+
+  return {
+    relations: relations,
+    loadEagerRelations: true,
+    paginationType: PaginationType.LIMIT_AND_OFFSET,
+    sortableColumns: sortableColumn,
+    defaultSortBy: [['id', 'DESC']],
+    searchableColumns: searchable,
+    select: select,
+    filterableColumns: filter,
+  } as PaginateConfig<any>;
 };

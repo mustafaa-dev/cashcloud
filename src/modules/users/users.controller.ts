@@ -15,22 +15,42 @@ import {
   AddClientDto,
   ApiResponse,
   CurrentUser,
+  GET_USERS_PAGINATE_CONFIG,
   LoggedInUserInterface,
   setPermissions,
 } from '@app/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { User } from './entities';
-import { Paginate, Paginated, PaginateQuery } from 'nestjs-paginate';
-import { JwtGuard } from '@app/auth/guards';
+import {
+  ApiPaginationQuery,
+  Paginate,
+  Paginated,
+  PaginateQuery,
+} from 'nestjs-paginate';
+import { JwtGuard, PermissionGuard } from '@app/auth/guards';
+import {
+  ApiBadRequestResponse,
+  ApiBody,
+  ApiForbiddenResponse,
+  ApiOperation,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 
+@ApiTags('Users')
 @Controller('users')
 @UseGuards(JwtGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @ApiOperation({ summary: 'Add Admin - For Super Admin Only' })
+  @ApiBody({ type: AddAdminDto })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiForbiddenResponse({ description: 'Forbidden resource' })
+  @ApiBadRequestResponse({ description: 'Bad Data' })
   @Post('/admin')
   @UseInterceptors(FileInterceptor('picture'))
-  // @UseGuards(PermissionGuard)
+  @UseGuards(PermissionGuard)
   @setPermissions(['add_admin_user'])
   async addAdmin(
     @UploadedFile() picture: Express.Multer.File,
@@ -39,9 +59,14 @@ export class UsersController {
     return await this.usersService.addAdmin(addAdminDto, picture);
   }
 
+  @ApiOperation({ summary: 'Add Admin - For Admins' })
+  @ApiBody({ type: AddClientDto })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiForbiddenResponse({ description: 'Forbidden resource' })
+  @ApiBadRequestResponse({ description: 'Bad Data' })
   @Post('/client')
   @UseInterceptors(FileInterceptor('picture'))
-  // @UseGuards(PermissionGuard)
+  @UseGuards(PermissionGuard)
   @setPermissions(['add_client_user'])
   async addClient(
     @UploadedFile() picture: Express.Multer.File,
@@ -55,6 +80,11 @@ export class UsersController {
   //   return await this.usersService.getUserLocation();
   // }
 
+  @ApiOperation({ summary: 'Get All Users - For Admins' })
+  @ApiPaginationQuery(GET_USERS_PAGINATE_CONFIG('admin'))
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiForbiddenResponse({ description: 'Forbidden resource' })
+  @ApiBadRequestResponse({ description: 'Bad Data' })
   @Get()
   @setPermissions(['read_all_users'])
   async getUsers(
@@ -64,6 +94,11 @@ export class UsersController {
     return await this.usersService.getUsers(query, user);
   }
 
+  @ApiOperation({ summary: 'Get Profile' })
+  @ApiPaginationQuery(GET_USERS_PAGINATE_CONFIG('admin'))
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiForbiddenResponse({ description: 'Forbidden resource' })
+  @ApiBadRequestResponse({ description: 'Bad Data' })
   @Get('/me')
   @setPermissions(['read_own_user'])
   async getMe(@CurrentUser() user: LoggedInUserInterface): Promise<User> {

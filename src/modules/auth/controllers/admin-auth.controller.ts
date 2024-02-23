@@ -1,13 +1,22 @@
 import { Controller, Ip, Post, Req, UseGuards } from '@nestjs/common';
-import { AdminLoginDto, ApiResponse, CurrentUser, Public } from '@app/common';
+import {
+  AdminLoginDto,
+  ApiResponse,
+  CurrentUser,
+  Public,
+  SuccessResponse,
+} from '@app/common';
 import { User } from '@app/users/entities';
 import { JwtGuard } from '@app/auth/guards/jwt.guard';
 import {
-  ApiAcceptedResponse,
+  ApiBearerAuth,
   ApiBody,
+  ApiCreatedResponse,
+  ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOperation,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { LocalAdminAuthGuard } from '@app/auth/guards/local-admin.guard';
 import { CommonAuthController } from '@app/auth/controllers/common-auth.controller';
@@ -15,7 +24,13 @@ import { AuthService } from '@app/auth/auth.service';
 
 @Controller('admin/auth')
 @ApiTags('Admin Auth')
-// @UseInterceptors(CacheInterceptor) // Add This here
+@ApiBearerAuth('access-token')
+@ApiUnauthorizedResponse({
+  description: "Can't be accessed || Unauthorized",
+})
+@ApiForbiddenResponse({ description: 'Forbidden resource' })
+@ApiCreatedResponse({ description: 'Created', type: SuccessResponse })
+// @UseGuards(PermissionGuard)
 @UseGuards(JwtGuard)
 export class AdminAuthController extends CommonAuthController {
   constructor(authService: AuthService) {
@@ -23,9 +38,8 @@ export class AdminAuthController extends CommonAuthController {
   }
 
   @ApiBody({ type: AdminLoginDto })
-  @ApiAcceptedResponse({ status: 201 })
   @ApiOperation({ summary: 'Admin Login' })
-  @ApiNotFoundResponse()
+  @ApiNotFoundResponse({ description: 'User Not found' })
   @Post('login')
   @Public()
   @UseGuards(LocalAdminAuthGuard)
