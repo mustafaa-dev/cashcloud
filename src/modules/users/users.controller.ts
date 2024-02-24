@@ -86,6 +86,7 @@ export class UsersController {
   @ApiForbiddenResponse({ description: 'Forbidden resource' })
   @ApiBadRequestResponse({ description: 'Bad Data' })
   @Get()
+  // @Version('1')
   @setPermissions(['read_all_users'])
   async getUsers(
     @Paginate() query: PaginateQuery,
