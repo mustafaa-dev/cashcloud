@@ -16,6 +16,7 @@ export class MediaService {
   }
 
   async uploadPicture(picture: Express.Multer.File) {
+    console.log(picture);
     const {
       public_id,
       width,
